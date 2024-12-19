@@ -1,0 +1,819 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Seven UPP",
+        "version": "1.0"
+    },
+    "paths": {
+        "/api/v1/masters/categories": {
+            "get": {
+                "tags": [
+                    "Masters"
+                ],
+                "description": "API to get categories",
+                "operationId": "categories",
+                "parameters": [
+                    {
+                        "name": "pagniation",
+                        "in": "query",
+                        "description": "pagniation",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "no"
+                        }
+                    },
+                    {
+                        "name": "is_featured",
+                        "in": "query",
+                        "description": "is_featured",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "int32",
+                            "example": "1"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "unexpected error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/masters/categories/{category_id}": {
+            "get": {
+                "tags": [
+                    "Masters"
+                ],
+                "description": "API to get categories details",
+                "operationId": "categoryDetails",
+                "parameters": [
+                    {
+                        "name": "category_id",
+                        "in": "path",
+                        "description": "category_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "no"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "unexpected error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/masters/destinations": {
+            "get": {
+                "tags": [
+                    "Masters"
+                ],
+                "description": "API to get destinations",
+                "operationId": "destinations",
+                "parameters": [
+                    {
+                        "name": "pagniation",
+                        "in": "query",
+                        "description": "pagniation",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "no"
+                        }
+                    },
+                    {
+                        "name": "is_featured",
+                        "in": "query",
+                        "description": "is_featured",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "int32",
+                            "example": "1"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "unexpected error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/masters/destinations/{destination_id}": {
+            "get": {
+                "tags": [
+                    "Masters"
+                ],
+                "description": "API to get destinations details",
+                "operationId": "destinationDetails",
+                "parameters": [
+                    {
+                        "name": "destination_id",
+                        "in": "path",
+                        "description": "destination_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "no"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "unexpected error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/login": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "api for user login",
+                "operationId": "login",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "integer"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "email": "9999999999",
+                                    "password": "123456"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/v1/password/forget-password": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Forget Password",
+                "description": "This api takes appUrl & email and send password reset link over email.",
+                "operationId": "create",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "appUrl": {
+                                        "type": "string",
+                                        "example": "https://test.com/"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "farhan@mailinator.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "default": {
+                        "description": "unexpected error"
+                    }
+                }
+            }
+        },
+        "/api/v1/password/reset": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Reset Password",
+                "description": "This api resets the password.",
+                "operationId": "reset",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "password": {
+                                        "type": "string",
+                                        "example": ""
+                                    },
+                                    "token": {
+                                        "type": "string",
+                                        "example": ""
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "default": {
+                        "description": "unexpected error"
+                    }
+                }
+            }
+        },
+        "/api/v1/changePassword": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Change Password",
+                "description": "This api Changes the existing password.",
+                "operationId": "changePassword",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "newPassword": {
+                                        "type": "string",
+                                        "example": "Demo@123"
+                                    },
+                                    "oldPassword": {
+                                        "type": "string",
+                                        "example": "Test@123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "default": {
+                        "description": "unexpected error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/user-organizations": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "description": "API to get assigned organzation to user",
+                "operationId": "user-organizations",
+                "responses": {
+                    "default": {
+                        "description": "unexpected error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/update-user-organization": {
+            "put": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "update-user-organization",
+                "description": "This api will updates user organization.",
+                "operationId": "update",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "organization_id": {
+                                        "type": "number",
+                                        "example": 16
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "default": {
+                        "description": "unexpected error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/me": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "description": "API to get organzation,user,settings info",
+                "operationId": "organizationUserInformation",
+                "responses": {
+                    "default": {
+                        "description": "unexpected error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/users-by-type/{user_type}": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "description": "API to get users by type",
+                "operationId": "getUsersByType",
+                "parameters": [
+                    {
+                        "name": "user_type",
+                        "in": "path",
+                        "description": "user_type",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "unexpected error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/map-retailers": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "SP-Buyer Mapping",
+                "description": "API for SP and buyer mapping.",
+                "operationId": "storeRetailers",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "dsp": {
+                                        "type": "number",
+                                        "example": 16
+                                    },
+                                    "retailers": {
+                                        "type": "string",
+                                        "example": "10,11,12"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "default": {
+                        "description": "unexpected error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/dsp-retailers/{dsp}": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "description": "API to get dsp buyers",
+                "operationId": "getDspRetailers",
+                "parameters": [
+                    {
+                        "name": "dsp",
+                        "in": "path",
+                        "description": "dsp",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "unexpected error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/user-details/{user_id}": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "description": "API to get user details",
+                "operationId": "userDetails",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "user_id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "unexpected error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/distributor-details": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "description": "API to get seller details",
+                "operationId": "distributorDetails",
+                "responses": {
+                    "default": {
+                        "description": "unexpected error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/contact": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "contact us",
+                "description": "API for contact us.",
+                "operationId": "contact",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "John@gmail.com"
+                                    },
+                                    "phone": {
+                                        "type": "number",
+                                        "example": 7412580369
+                                    },
+                                    "company": {
+                                        "type": "string",
+                                        "example": "SIPL"
+                                    },
+                                    "subject": {
+                                        "type": "string",
+                                        "example": "Test"
+                                    },
+                                    "message": {
+                                        "type": "string",
+                                        "example": "lorem lorem lorem lorem "
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "default": {
+                        "description": "unexpected error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/my-profile": {
+            "put": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "my-profile",
+                "description": "API to update my profile.",
+                "operationId": "myProfile",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John"
+                                    },
+                                    "last_name": {
+                                        "type": "string",
+                                        "example": "Snow"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "default": {
+                        "description": "unexpected error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/user-status": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "user-status",
+                "description": "This api will updates user status of the organization team.",
+                "operationId": "updateUserStatus",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "user_id": {
+                                        "type": "number",
+                                        "example": 16
+                                    },
+                                    "status": {
+                                        "type": "number",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "default": {
+                        "description": "unexpected error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/update-fcm-token": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "update-fcm-token",
+                "description": "This api will update fcm token of user.",
+                "operationId": "updateFcmToken",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "fcmToken": {
+                                        "type": "string",
+                                        "example": ""
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "default": {
+                        "description": "unexpected error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/register": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "register",
+                "description": "This api for buyer registration.",
+                "operationId": "register",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": ""
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": ""
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": ""
+                                    },
+                                    "phone_number": {
+                                        "type": "string",
+                                        "example": ""
+                                    },
+                                    "verify_link": {
+                                        "type": "string",
+                                        "example": "test.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "default": {
+                        "description": "unexpected error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/verify-account": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "verify-account",
+                "description": "This api will verify-account.",
+                "operationId": "verifyAccount",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "test@test.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "default": {
+                        "description": "unexpected error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/": {
+            "get": {
+                "description": "Home page",
+                "operationId": "49ac17593e60f5358b8c8e81c3298e97",
+                "responses": {
+                    "default": {
+                        "description": "Welcome page"
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,7 @@
+{
+    "Dashboard": true,
+    "Masters": true,
+    "User": true,
+    "Hotels": true,
+    "Administration": true
+}
