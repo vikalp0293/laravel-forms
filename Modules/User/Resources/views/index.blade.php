@@ -7,8 +7,8 @@
 	<div class="nk-block-head nk-block-head-sm">
         <div class="nk-block-between">
             <div class="nk-block-head-content">
-                <h3 class="nk-block-title page-title">Customers</h3>
-                <p>You have total <span class="record_count">{{ $usersCount }}</span> customers.</p>
+                <h3 class="nk-block-title page-title">Users</h3>
+                <p>You have total <span class="record_count">{{ $usersCount }}</span> users.</p>
             </div><!-- .nk-block-head-content -->
             <div class="nk-block-head-content">
                 <div class="toggle-wrap nk-block-tools-toggle">
@@ -28,12 +28,12 @@
                                     </div>
                                 </div>
                             </li>
-                            <li>
+                            <!-- <li>
                                 <a href="#" class="btn btn-trigger btn-icon dropdown-toggle" data-toggle="modal" title="filter" data-target="#modalFilterUser">
                                     <div class="dot dot-primary"></div>
                                     <em class="icon ni ni-filter-alt"></em>
                                 </a>
-                            </li>
+                            </li> -->
 
                             {{-- <li>
                                 <div class="dropdown">
@@ -66,7 +66,7 @@
         <div id="filter_tag_list" class="filter-tag-list"></div>
         <!-- -->
         <div class="nk-tb-list is-separate mb-3">
-            <table class="broadcast-init nowrap nk-tb-list is-separate" data-auto-responsive="false">
+            <table class="broadcast-init nowrap nk-tb-list is-separate" data-auto-responsive="true">
                 <thead>
                     <tr class="nk-tb-item nk-tb-head">
                         <th class="nk-tb-col nk-tb-col-check">
@@ -74,9 +74,9 @@
                                 <input type="checkbox" class="custom-control-input" id="check-all" name="check_all"><label class="custom-control-label" for="check-all"></label>
                             </div>
                         </th>
-                        <th class="nk-tb-col tb-col-mb"><span class="sub-text">Name</span></th>
                         <th class="nk-tb-col tb-col-mb"><span class="sub-text">Email</span></th>
-                        <th class="nk-tb-col tb-col-md"><span class="sub-text">Contact Number</span></th>
+                        <th class="nk-tb-col tb-col-md"><span class="sub-text">Subject</span></th>
+                        <th class="nk-tb-col tb-col-md"><span class="sub-text">Grade</span></th>
                         <th class="nk-tb-col tb-col-md w-1 text-center" nowrap="true"><span class="sub-text">Status</span></th>
                         <th class="nk-tb-col tb-col-md w-1" nowrap="true"><span class="sub-text">Created At</span></th>
                         <th class="nk-tb-col nk-tb-col-tools text-right w-1" nowrap="true">
@@ -353,11 +353,7 @@
                             return '<td class="nk-tb-col nk-tb-col-check"><div class="custom-control custom-control-sm custom-checkbox notext"><input type="checkbox" class="custom-control-input cb-check" id="cb-' + row.id + '" value="' + row.id + '" name="checked_items[]"><label class="custom-control-label" for="cb-' + row.id + '"></label></div></td>'
                         }
                     },
-                    {
-                        "class": "nk-tb-col tb-col-lg",
-                        data: 'name',
-                        name: 'name'
-                    },
+                    
                     {
                         "class": "nk-tb-col tb-col-lg",
                         data: 'email',
@@ -365,8 +361,13 @@
                     },
                     {
                         "class": "nk-tb-col tb-col-lg",
-                        data: 'phone_number',
-                        name: 'phone_number'
+                        data: 'subject',
+                        name: 'subject'
+                    },
+                    {
+                        "class": "nk-tb-col tb-col-lg",
+                        data: 'grade',
+                        name: 'grade'
                     },
                     {
                         "class": "nk-tb-col tb-col-lg text-center",

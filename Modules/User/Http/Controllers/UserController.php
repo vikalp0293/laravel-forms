@@ -20,6 +20,10 @@ use App\Models\Audit;
 use Modules\Administration\Entities\NotificationTemplate;
 use Helpers;
 use App\Jobs\SendNotificationJob;
+use Modules\Masters\Entities\State;
+use Modules\Masters\Entities\Country;
+use Modules\Masters\Entities\Subject;
+use Modules\Masters\Entities\Grade;
 
 class UserController extends Controller
 {
@@ -46,19 +50,14 @@ class UserController extends Controller
         $authUser = \Auth::user();
 
         $role = $authUser->getRoleNames()->toArray();
-        $organizations = array();
-
-        if(!empty($role) && $role[0] != \Config::get('constants.ROLES.SUPERUSER')){
-            $organizations = Helpers::getUserOrganizations($authUser->id);
-        }
-
 
         $data = User::from('users as u')
-                ->select('u.id','u.name','u.email','u.file','u.phone_number','u.created_at','u.updated_at','r.name as role','r.label as roleName','u.status')
+                ->select('u.id','u.name','u.email','u.phone_number','u.created_at','u.updated_at','r.name as role','r.label as roleName','u.status','s.name as subject','g.name as grade')
                 ->leftJoin('model_has_roles as mr','mr.model_id','=','u.id')
                 ->leftJoin('roles as r','mr.role_id','=','r.id')
-                ->where('r.name',\Config::get('constants.ROLES.CUSTOMER'))
-                ->where('u.is_approved',1)
+                ->leftJoin('m_subjects as s','s.id','=','u.subject_id')
+                ->leftJoin('m_grades as g','g.id','=','u.grade_id')
+                ->where('r.name','generaluser')
                 ->where(function ($query) use ($request) {
                     if (!empty($request->toArray())) {
                         if ($request->get('name') != '') {
@@ -143,12 +142,11 @@ class UserController extends Controller
                            $delete = url('/').'/user/delete/'.$row->id;
                            $confirm = '"Are you sure, you want to delete it?"';
 
-                            // $editBtn = "<li>
-                            //             <a href='".$edit."'>
-                            //                 <em class='icon ni ni-edit'></em> <span>Edit</span>
-                            //             </a>
-                            //         </li>";
-                           $editBtn = "";
+                            $editBtn = "<li>
+                                        <a href='".$edit."'>
+                                            <em class='icon ni ni-edit'></em> <span>Edit</span>
+                                        </a>
+                                    </li>";
                             
                             $deleteBtn = "<li>
                                         <a href='".$delete."' onclick='return confirm(".$confirm.")'  class='delete'>
@@ -158,7 +156,8 @@ class UserController extends Controller
 
                             $logbtn = '<li><a href="#" data-resourceId="'.$row->id.'" class="audit_logs"><em class="icon ni ni-list"></em> <span>Audit Logs</span></a></li>';
 
-                            $changePassword = '<li><a href="#" data-resourceId="'.$row->id.'" class="changePassword"><em class="icon ni ni-lock-alt"></em> <span>Update Password</span></a></li>';
+                            $changePassword = '';
+                            // $changePassword = '<li><a href="#" data-resourceId="'.$row->id.'" class="changePassword"><em class="icon ni ni-lock-alt"></em> <span>Update Password</span></a></li>';
 
                             $btn = '';
                             $btn .= '<ul class="nk-tb-actio ns gx-1">
@@ -370,102 +369,6 @@ class UserController extends Controller
             return redirect('profile/setting')->with('error', trans('messages.SOMETHING_WENT_WRONG'));
         }
     }
-
-
-    /**
-     * Display a listing of the resource.
-     * @return Renderable
-     */
-    public function staffList(Request $request)
-    {
-        $userPermission = \Session::get('userPermission');
-
-        $authUser = \Auth::user();
-        $role = $authUser->getRoleNames()->toArray();
-
-        $users = User::from('users as u')
-                ->select('u.id','u.name','u.email','u.file','u.status','u.phone_number','u.created_at','u.updated_at','r.name as role','r.label as roleName','u.created_by')
-                ->leftJoin('model_has_roles as mr','mr.model_id','=','u.id')
-                ->leftJoin('roles as r','mr.role_id','=','r.id')
-                ->whereNotIn('r.name',[\Config::get('constants.ROLES.CUSTOMER'),\Config::get('constants.ROLES.SUPERUSER'),\Config::get('constants.ROLES.SUPERUSER')])
-                ->where('u.id','!=',$authUser->id)
-                ->where(function ($query) use ($request) {
-                    if (!empty($request->toArray())) {
-                        if ($request->get('firstname') != '') {
-                            $query->where('u.name', $request->get('firstname'));
-                        }
-                        if ($request->get('mobileNumber') != '') {
-                            $query->where('u.phone_number', $request->get('mobileNumber'));
-                        }
-                        if ($request->get('role') != '') {
-                            $query->where('r.name', $request->get('role'));
-                        }
-                        if((isset($request->fromDate) && isset($request->toDate))) {
-                            $dateFrom =  date('Y-m-d',strtotime($request->fromDate));
-                            $dateTo =  date('Y-m-d',strtotime($request->toDate. ' +1 day'));
-                            $query->whereBetween('u.created_at', array($dateFrom, $dateTo));
-                        } elseif (isset($request->fromDate)) {
-
-                            $dateFrom =  date('Y-m-d',strtotime($request->fromDate));
-                            $query->where('u.created_at', '>=', $dateFrom);
-                        } elseif (isset($request->toDate)) {
-                            $dateTo =  date('Y-m-d',strtotime($request->toDate));
-                            $query->where('u.created_at', '<=', $dateTo);
-                        }
-                    }
-                })
-                ->orderby('u.id','desc')
-                ->get();
-
-        $usersCount = 0;
-        if(!empty($users->toArray())){
-            $usersCount = count($users);
-        }
-
-        $filterRequests = $request->all();
-
-        $authUser = \Auth::user();
-        $roles              =   Role::whereNotIn('name',[\Config::get('constants.ROLES.CUSTOMER'),\Config::get('constants.ROLES.SUPERUSER')])->get();
-        return view('user::staff/index')->with(compact('usersCount','roles','users','filterRequests'));
-    }
-
-    
-
-    /**
-     * Show the form for creating a new resource.
-     * @return Renderable
-     */
-    public function create()
-    {
-
-        $user = \Auth::user();
-        $roles              =   Role::where('name',\Config::get('constants.ROLES.CUSTOMER'))->first();
-        
-        $retailerCategories = RetailerCategories::all();
-        $states             = State::all();
-            $organizations = array();
-
-        return view('user::create',['roles' => $roles,'retailerCategories' => $retailerCategories,'states' => $states,'organizations' => $organizations]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     * @return Renderable
-     */
-    public function createStaff()
-    {
-        $user = \Auth::user();
-
-        $role = $user->getRoleNames()->toArray();
-        $getRoles = [\Config::get('constants.ROLES.CUSTOMER'),\Config::get('constants.ROLES.SUPERUSER'),\Config::get('constants.ROLES.SUPERUSER')];
-
-        $roles              =   Role::whereNotIn('name',$getRoles)
-                                ->orderby('name','ASC')
-                                ->get();
-
-        return view('user::staff/create',['roles' => $roles]);
-    }
-
     
 
     /**
@@ -565,79 +468,6 @@ class UserController extends Controller
         }
     }
 
-    public function removeImage($user_id) {
-        $user = User::where('id',$user_id)->first();
-        $user->file = Null;
-        $user->original_name = Null;
-        if($user->save()){
-            return $arrayName = array('success' => true);
-        }else{
-            return $arrayName = array('success' => false);
-        }
-    }
-
-    /**
-     * Show the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function show($id)
-    {
-        $authUser = \Auth::user();
-
-        $user =     User::from('users as u')
-                    ->select('u.*','r.name as role','r.label as roleName','ob.buyer_category','ob.credit_limit','ob.status','rc.retailer_catagory as retailer_category','s.name as state','c.name as city','d.name as district',
-                        DB::Raw('CONCAT(u.name," ", u.last_name) AS FullName')
-                    )
-                    ->leftJoin('model_has_roles as mr','mr.model_id','=','u.id')
-                    ->leftJoin('roles as r','mr.role_id','=','r.id')
-                    ->leftJoin('organization_buyer as ob','ob.buyer_id','=','u.id')
-                    ->leftJoin('retailer_catagory as rc','rc.id','=','ob.buyer_category')
-                    ->leftJoin('states as s','s.id','=','u.state')
-                    ->leftJoin('cities as c','c.id','=','u.city')
-                    ->leftJoin('districts as d','d.id','=','u.district')
-                    ->where('u.id',$id)
-                    // ->where('ob.organization_id',$authUser->organization_id)
-                    ->first();
-
-        if($user){
-            return view('user::detail',['user' => $user]);
-        }else{
-            return redirect('user/staff')->with('error', trans('messages.SOMETHING_WENT_WRONG'));
-        }
-
-    }
-
-    /**
-     * Show the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function showStaff($id)
-    {
-        $authUser = \Auth::user();
-
-        $user =     User::from('users as u')
-                    ->select('u.*','r.name as role','r.label as roleName','s.name as state','c.name as city','d.name as district',
-                        DB::Raw('CONCAT(u.name," ", u.last_name) AS FullName')
-                    )
-                    ->leftJoin('model_has_roles as mr','mr.model_id','=','u.id')
-                    ->leftJoin('roles as r','mr.role_id','=','r.id')
-                    ->leftJoin('states as s','s.id','=','u.state')
-                    ->leftJoin('cities as c','c.id','=','u.city')
-                    ->leftJoin('districts as d','d.id','=','u.district')
-                    ->where('u.id',$id)
-                    // ->where('u.organization_id',$authUser->organization_id)
-                    ->first();
-
-        if($user){
-            return view('user::staff/detail',['user' => $user]);
-        }else{
-            return redirect('user')->with('error', trans('messages.SOMETHING_WENT_WRONG'));
-        }
-    }
-
-    
     
 
     /**
@@ -645,33 +475,34 @@ class UserController extends Controller
      * @param int $id
      * @return Renderable
      */
-    public function editStaff($id)
+    public function edit($id)
     {
         try {
             $authUser = \Auth::user();
             $user = User::from('users as u')
-                    ->select('u.*','r.id as role','r.name as roleName','r.label as roleLable')
-                    ->leftJoin('model_has_roles as mr','mr.model_id','=','u.id')
-                    ->leftJoin('roles as r','mr.role_id','=','r.id')
                     ->where('u.id',$id)
                     ->first();
 
-            $role = $authUser->getRoleNames()->toArray();
+            if(!$user){
+                return redirect('user')->with('error', 'Invalid user');
+            }
 
-            $getRoles = [\Config::get('constants.ROLES.CUSTOMER'),\Config::get('constants.ROLES.SUPERUSER'),\Config::get('constants.ROLES.SUPERUSER')];
+            $subjects = Subject::where('status','active')->orderBy('name','asc')->get();
+            $grades = Grade::where('status','active')->orderBy('name','asc')->get();
+            $countries = Country::where('status','active')->orderBy('name','asc')->get();
+            $states = State::where('status','active')->orderBy('name','asc')->get();
 
-            $roles              =   Role::whereNotIn('name',$getRoles)
-                                    ->orderby('name','ASC')
-                                    ->get();
-
-            return view('user::staff/create',['roles' => $roles,'user' => $user]);
+            return view('user::create',[
+                'subjects' => $subjects,
+                'grades' => $grades,
+                'countries' => $countries,
+                'states' => $states,
+                'user' => $user,
+            ]);
 
         } catch (Exception $e) {
             return redirect('user')->with('error', $exception->getMessage());           
         }
-
-
-        return view('user::staff/edit');
     }
 
     
@@ -682,85 +513,38 @@ class UserController extends Controller
      * @param int $id
      * @return Renderable
      */
-    public function updateStaff(Request $request, $id)
+    public function update(Request $request, $id)
     {   
 
         try {
 
             $checkUser = User::where('id','!=',$id)->where('email',$request->input("email"))->first();
             if($checkUser){
-                return redirect('user/staff/create-staff')->with('error', 'Email already exists');
+                return redirect('user/edit/'.$id)->with('error', 'Email already exists');
             }
 
             $authUser = \Auth::user();
             $user = User::from('users as u')
-                    ->select('u.*','r.id as role')
-                    ->leftJoin('model_has_roles as mr','mr.model_id','=','u.id')
-                    ->leftJoin('roles as r','mr.role_id','=','r.id')
+                    ->select('u.*')
                     ->where('u.id',$id)
                     ->first();
 
-            $oldUserRole = $user->role;
-
-            $user->name                 = $request->exists("name") ? $request->input("name") : "";
             $user->email                = $request->exists("email") ? $request->input("email") : "";
-            $user->phone_number         = $request->exists("mobileNumber") ? $request->input("mobileNumber") : "";
-            $user->created_by           = $authUser->id;
-            
-            if($request->exists("approved") && $request->input("approved") == 1){
+            $user->subject_id                = $request->exists("subject") ? $request->input("subject") : "";
+            $user->grade_id                = $request->exists("grade") ? $request->input("grade") : "";
+            $user->country                = $request->exists("country") ? $request->input("country") : "";
+            $user->state                = $request->exists("state") ? $request->input("state") : "";
+
+            if($request->exists("status") && $request->input("status") == 1){
                 $user->status           = 1;
             }else{
                 $user->status           = 0;
             }
 
-            if ($request->hasFile('file')) {
-
-                $image1 = $request->file('file');
-                $image1NameWithExt = $image1->getClientOriginalName();
-                list($image1_width,$image1_height)=getimagesize($image1);
-                // Get file path
-                $originalName = pathinfo($image1NameWithExt, PATHINFO_FILENAME);
-                $image1Name = pathinfo($image1NameWithExt, PATHINFO_FILENAME);
-                // Remove unwanted characters
-                $image1Name = preg_replace("/[^A-Za-z0-9 ]/", '', $image1Name);
-                $image1Name = preg_replace("/\s+/", '-', $image1Name);
-
-                // Get the original image extension
-                $extension  = $image1->getClientOriginalExtension();
-                if($extension != 'jpg' && $extension != 'jpeg' && $extension != 'png'){
-                    return redirect('user/staff')->with('error', trans('messages.INVALID_IMAGE'));
-                }
-                $image1Name = $image1Name.'_'.time().'.'.$extension;
-                
-                $destinationPath = public_path('uploads/users');
-                if($image1_width > 800){
-                    $image1_canvas = Image::canvas(800, 800);
-                    $image1_image = Image::make($image1->getRealPath())->resize(800, 800, function ($constraint) {
-                        $constraint->aspectRatio();
-                        $constraint->upsize();
-                    });
-                    $image1_canvas->insert($image1_image, 'center');
-                    $image1_canvas->save($destinationPath.'/'.$image1Name,80);
-                }else{
-                    $image1->move($destinationPath, $image1Name);
-                }
-                $image1_file = public_path('uploads/users/'. $image1Name);
-
-                $user->file = $image1Name;
-                $user->original_name = $image1NameWithExt;
-            }
-
             if($user->save()){
-                
-
-                //Remove role of the user
-                if($request->input("role") != $user->role){
-                    DB::statement("UPDATE model_has_roles SET role_id = ".$request->input("role")." where model_id = ".$user->id);
-                }
-                $roleLable = ucfirst(str_replace('_', ' ', $request->input("role")));
-                return redirect('user/staff')->with('message', trans('messages.UPDATED_SUCCESSFULLY'));
+                return redirect('user')->with('message', trans('messages.UPDATED_SUCCESSFULLY'));
             }else{
-                return redirect('user/staff')->with('error', trans('messages.SOMETHING_WENT_WRONG'));
+                return redirect('user')->with('error', trans('messages.SOMETHING_WENT_WRONG'));
             }
 
         } catch (Exception $e) {

@@ -69,6 +69,7 @@ class LoginController extends Controller
             \Session::put('email', $user->email);
             \Session::put('token', $token);
             $role = $user->getRoleNames()->toArray();
+            \Session::put('role', $role);
             return redirect()->intended('dashboard');
         }else{
             $user = User::where('email',$request->get('email'))->first();

@@ -31,6 +31,9 @@ Route::get('/help', [App\Http\Controllers\HomeController::class, 'help'])->name(
 Route::get('/get-states-by-country/{id}', 'App\Http\Controllers\Auth\RegisterController@getStateByCountry');
 Route::post('/registeruser', 'App\Http\Controllers\Auth\RegisterController@registerUser');
 
+
+Route::get('/verify-account/{id}', 'App\Http\Controllers\Auth\RegisterController@verifyUser');
+
 Route::post('post-login', 'App\Http\Controllers\Auth\LoginController@postLogin'); 
 Route::group([ 'prefix' => 'password' ], function () {
     Route::post('send-link', 'App\Http\Controllers\Auth\ResetPasswordController@sendPasswordLink');

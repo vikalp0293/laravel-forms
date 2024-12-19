@@ -12,6 +12,7 @@ use Modules\Masters\Entities\State;
 use Modules\Masters\Entities\Country;
 use Modules\Masters\Entities\Subject;
 use Modules\Masters\Entities\Grade;
+use Modules\User\Entities\ModelRole;
 
 
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
@@ -64,6 +65,26 @@ class RegisterController extends Controller
         ]);
     }
 
+    public function verifyUser($user_id){
+        $user = User::where('id',$user_id)->first();
+        if($user){
+            if(!is_null($user->verified_at)){
+                return redirect()->route('login')->with('error', 'User already verified');
+            }
+
+            $user->verified_at = date('Y-m-d H:i:s');
+            if($user->save()){
+                return redirect()
+                ->route('login')
+                ->with('success', 'Email verified successfully');
+            }
+
+        }else{
+            return redirect()->route('register')->with('error', 'User not found');
+        }
+    }
+
+
     public function getStateByCountry($country_id)
     {
         $states   =   State::where('country_id',$country_id)->orderBy('name','asc')->get();  
@@ -92,7 +113,6 @@ class RegisterController extends Controller
 
     public function registerUser(Request $request){
         request()->validate([
-            'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'g-recaptcha-response' => 'required|recaptchav3:register,0.5'
@@ -100,7 +120,7 @@ class RegisterController extends Controller
 
 
         $user = new User();
-        $user->name                 = $request->name;
+        // $user->name                 = $request->name;
         $user->email                = $request->email;
         $user->password             = Hash::make($request->input("password"));
         $user->subject_id                = $request->subject;
@@ -110,10 +130,17 @@ class RegisterController extends Controller
         $user->dob                = date('Y-m-d', strtotime($request->dob));
 
         if($user->save()){
+
+            $modelRole = new ModelRole();
+            $modelRole->role_id = 2;
+            $modelRole->model_type = 'Modules\User\Entities\User';
+            $modelRole->model_id = $user->id;
+            $modelRole->save();
+
             $verify_link = url('/verify-account/' . $user->id);
 
             $mailBody = '<a href="' . $verify_link . '" target="_blank" rel="noopener" title="reset password" style="text-decoration: none; font-size: 16px; color: #fff; background: #FF8000; border-radius: 5px;display: block;text-align: center;padding: 15px 5px; float:left; width: 25%;" margin-top:10px;> Verify Account </a>';
-            $to_name = $user->name;
+            $to_name = $user->email;
             $to_email = $user->email;
             $mailSubject = 'Verify Your Account';
             $data = array('name' => $to_name, "body" => $mailBody, 'mailSubject' => $mailSubject);

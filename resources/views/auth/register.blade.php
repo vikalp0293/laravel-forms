@@ -22,6 +22,21 @@
  
     <link id="skin-default" rel="stylesheet" href="{{url('css/theme.css')}}">
     {!! RecaptchaV3::initJs() !!}
+
+    <style type="text/css">
+        .text-danger {
+            color: #25e43d !important;
+        }
+
+        .parsley-required, .parsley-equalto
+        {   
+            color: #25e43d !important;
+            font-size: 80%;
+            font-weight: 400;
+        }
+
+    </style>
+
 </head>
 <body class="nk-body bg-login npc-default pg-auth">
     <div class="nk-app-root">
@@ -76,7 +91,7 @@
                                         <form method="POST" action="{{ url('registeruser') }}">
                                             @csrf
                                             <div class="row">
-                                                <div class="col-md-6">
+                                                <!-- <div class="col-md-6">
                                                     <div class="form-group">
                                                         <div class="form-label-group">
                                                             <label class="form-label" for="name">Full Name <span class="text-danger">*</span></label>
@@ -88,14 +103,30 @@
                                                             </span>
                                                         @enderror
                                                     </div>
-                                                </div>
+                                                </div> -->
                                                 <div class="col-md-6">
                                                     <div class="form-group">
                                                         <div class="form-label-group">
-                                                            <label class="form-label" for="email">E-Mail Address <span class="text-danger">*</span></label>
+                                                            <label class="form-label" for="email">E-Mail <span class="text-danger">*</span></label>
                                                         </div>
                                                         <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required>
                                                         @error('email')
+                                                            <span class="invalid-feedback" role="alert">
+                                                                <strong>{{ $message }}</strong>
+                                                            </span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <div class="form-label-group">
+                                                            <label class="form-label" for="confirmemail">Confirm E-Mail <span class="text-danger">*</span></label>
+                                                        </div>
+                                                        <input id="confirmemail" type="email" class="form-control @error('confirmemail') is-invalid @enderror" name="confirmemail" value="{{ old('confirmemail') }}" required
+                                                        data-parsley-equalto="#email" 
+                                                        data-parsley-equalto-message="Emails must match">
+                                                        @error('confirmemail')
                                                             <span class="invalid-feedback" role="alert">
                                                                 <strong>{{ $message }}</strong>
                                                             </span>
@@ -209,7 +240,11 @@
                                                             <label class="form-label" for="dob">Date of Birth <span class="text-danger">*</span></label>
                                                         </div>
                                                         <div class="form-control-wrap">
-                                                            <x-inputs.datePicker for="dob" size="sm" placeholder="Select Date" name="dob" icon="calendar" required='true'/>
+                                                            <!-- <x-inputs.datePicker for="dob" size="sm" placeholder="Select Date" name="dob" id="dob" icon="calendar" required='true' onchange="validateAge(this)"/> -->
+
+                                                            <input required="true" type="text" class="form-control date-picker" id="dob" value="" placeholder="Select Date" name="dob" onchange="validateAge(this)">
+
+                                                            <small id="dob-error" class="text-danger"></small>
                                                             @error('dob')
                                                                 <span class="invalid-feedback" role="alert">
                                                                     <strong>{{ $message }}</strong>
@@ -218,6 +253,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
+
 
                                                 <div class="col-md-6" style="margin-top: 30px;">
                                                     <div class="form-group">
@@ -272,6 +308,21 @@
         $(document).ready(function(){
             $('form').parsley();
         });
+
+        function validateAge(input) {
+            const dob = new Date(input.value);
+            const today = new Date();
+            const age = today.getFullYear() - dob.getFullYear();
+            const monthDifference = today.getMonth() - dob.getMonth();
+            const dayDifference = today.getDate() - dob.getDate();
+
+            if (age < 18 || (age === 18 && (monthDifference < 0 || (monthDifference === 0 && dayDifference < 0)))) {
+                document.getElementById("dob-error").innerText = "You must be at least 18 years old.";
+                input.value = ''; // Clear the input if validation fails
+            } else {
+                document.getElementById("dob-error").innerText = '';
+            }
+        }
 
         function getStates(country_id) {
             var root_url = "<?php echo Request::root(); ?>";

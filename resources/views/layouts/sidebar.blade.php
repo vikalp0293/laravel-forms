@@ -1,6 +1,10 @@
 @php
 $userRole = \Session::get('role');
+$userRole = $userRole[0];
 @endphp
+
+
+
 <div class="nk-sidebar nk-sidebar-fixed is-light " data-content="sidebarMenu">
     <div class="nk-sidebar-element nk-sidebar-head">
         <div class="nk-sidebar-brand">
@@ -30,6 +34,13 @@ $userRole = \Session::get('role');
                         </a>
                     </li><!-- .nk-menu-item -->
 
+                    @if($userRole == 'superadmin')
+                    <li class="nk-menu-item">
+                        <a href="{{url('/user')}}" class="nk-menu-link">
+                            <span class="nk-menu-icon"><em class="icon ni ni-users-fill"></em></span>
+                            <span class="nk-menu-text">Users</span>
+                        </a>
+                    </li>
                    
 
                     <!-- <li class="nk-menu-item has-sub">
@@ -74,7 +85,7 @@ $userRole = \Session::get('role');
                         </ul>
                     </li>
 
-
+                    @endif
                     
                     
                 </ul>

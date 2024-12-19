@@ -38,24 +38,7 @@ Route::prefix('user')->group(function() {
     Route::get('/address-details/{address_id}', 'UserController@addressDetails');
     Route::post('/address/{user_id}', 'UserController@addressUpdate');
     Route::get('/address/remove/{address_id}', 'UserController@removeAddress');
-    Route::post('/check-user', 'UserController@checkUser');
-
-    Route::prefix('staff')->group(function() {
-        Route::get('/', 'UserController@staffList');
-        Route::post('/', 'UserController@staffList');
-        Route::get('/staffListOld', 'UserController@staffListOld');
-        Route::get('/create-staff', 'UserController@createStaff');
-        Route::post('/create-staff', 'UserController@storeStaff');
-        Route::get('/edit-staff/{user_id}', 'UserController@editStaff');
-        Route::post('/edit-staff/{user_id}', 'UserController@updateStaff');
-        Route::get('/staff-detail/{user_id}', 'UserController@showStaff');
-        Route::get('/delete-staff/{user_id}', 'UserController@destroyStaff');
-        Route::post('/staff-bulk-update', 'UserController@staffBulkUpdate');
-    });
-
-    Route::get('/organization-brand', 'UserController@getBrandByOrganization');
-
-    
+    Route::post('/check-user', 'UserController@checkUser');    
     
 });
 
