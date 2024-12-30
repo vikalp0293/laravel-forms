@@ -113,7 +113,7 @@
                                 <div class="nk-block-between">
                                 </div>
                                 <div class="mt-3">
-                                    <p>&copy; 2024 laravel-forms. All Rights Reserved.</p>÷
+                                    <p>&copy; 2024 laravel-forms. All Rights Reserved.</p>
                                 </div>
                             </div><!-- .nk-block -->
                         </div>

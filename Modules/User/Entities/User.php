@@ -24,10 +24,6 @@ class User extends Authenticatable implements Auditable
     protected $guard_name = 'web';
 
 
-    protected $auditInclude = [
-        'id', 'organization_id', 'name', 'last_name', 'email', 'password', 'phone_number', 'confirmed_at', 'confirmation_code', 'remember_token', 'created_by', 'updated_by', 'deleted_at', 'created_at', 'updated_at', 'shop_name', 'gst', 'retailer_category', 'status', 'address1', 'address2', 'country', 'state', 'pincode', 'district', 'city', 'is_synced_in_tally', 'tally_customer_id', 'source', 'credit_limit', 'used_limit'
-    ];
-
 
     /*public function role()
     {
@@ -56,23 +52,5 @@ class User extends Authenticatable implements Auditable
         return $this->name . ' ' . $this->last_name;
     }
 
-    public function getStripeMetaData()
-    {
-        $data = [
-            'email' => $this->email,
-            'description' => $this->name,
-        ];
-
-        return $data;
-    }
-
-    public function bookingDetails()
-    {
-        return $this->hasMany(BookingDetail::class);
-    }
-
-    public function stripe_invoices()
-    {
-        return $this->hasMany(Invoice::class);
-    }
+    
 }

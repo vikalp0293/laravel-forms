@@ -62,11 +62,11 @@
                                 <input type="checkbox" class="custom-control-input" id="check-all" name="check_all"><label class="custom-control-label" for="check-all"></label>
                             </div>
                         </th>
-                        <th class="nk-tb-col tb-col-mb"><span class="sub-text">Name</span></th>
+                        <th class="nk-tb-col"><span class="sub-text">Name</span></th>
                         
-                        <th class="nk-tb-col tb-col-mb nk-tb-action-col text-center" nowrap="true"><span class="sub-text">Status</span></th>
-                        <th class="nk-tb-col tb-col-mb nk-tb-action-col" nowrap="true"><span class="sub-text">Created at</span></th>
-                        <th class="nk-tb-col tb-col-mb nk-tb-action-col" nowrap="true"><span class="sub-text">Updated at</span></th>
+                        <th class="nk-tb-col nk-tb-action-col text-center" nowrap="true"><span class="sub-text">Status</span></th>
+                        <th class="nk-tb-col nk-tb-action-col" nowrap="true"><span class="sub-text">Created at</span></th>
+                        <th class="nk-tb-col nk-tb-action-col" nowrap="true"><span class="sub-text">Updated at</span></th>
                         <th class="nk-tb-col nk-tb-col-tools nk-tb-action-col text-right" nowrap="true">
                             <span class="sub-text">Action</span>
                         </th>
@@ -345,7 +345,7 @@
                     url: "{{ url('masters/grade') }}",
                 },
                 columns: [{
-                        "class": "nk-tb-col tb-col-lg nk-tb-col-check",
+                        "class": "nk-tb-col  nk-tb-col-check",
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex',
                         orderable: false,
@@ -355,27 +355,27 @@
                         }
                     },
                     {
-                        "class": "nk-tb-col tb-col-lg",
+                        "class": "nk-tb-col ",
                         data: 'name',
                         name: 'name'
                     },
                     {
-                        "class": "nk-tb-col tb-col-lg text-center",
+                        "class": "nk-tb-col  text-center",
                         data: 'status',
                         name: 'status'
                     },
                     {
-                        "class": "nk-tb-col tb-col-lg",
+                        "class": "nk-tb-col ",
                         data: 'created_at',
                         name: 'created_at'
                     },
                     {
-                        "class": "nk-tb-col tb-col-lg",
+                        "class": "nk-tb-col ",
                         data: 'updated_at',
                         name: 'updated_at'
                     },
                     {
-                        "class": "nk-tb-col tb-col-lg text-right nk-tb-col-tools",
+                        "class": "nk-tb-col  text-right nk-tb-col-tools",
                         data: 'action',
                         name: 'action',
                         orderable: false,

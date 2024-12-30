@@ -266,32 +266,32 @@ array(
             serverSide: true,
             ajax: "{{ url('administration/notification/templates') }}",
             columns: [{
-                    "class": "nk-tb-col tb-col-lg nk-tb-col-check",
+                    "class": "nk-tb-col  nk-tb-col-check",
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'
                 },
                 {
-                    "class": "nk-tb-col tb-col-lg",
+                    "class": "nk-tb-col ",
                     data: 'friendly_name',
                     name: 'friendly_name'
                 },
                 {
-                    "class": "nk-tb-col tb-col-lg",
+                    "class": "nk-tb-col ",
                     data: 'name',
                     name: 'name'
                 },
                 {
-                    "class": "nk-tb-col tb-col-lg",
+                    "class": "nk-tb-col ",
                     data: 'created_at',
                     name: 'created_at'
                 },
                 {
-                    "class": "nk-tb-col tb-col-lg",
+                    "class": "nk-tb-col ",
                     data: 'updated_at',
                     name: 'updated_at'
                 },
                 {
-                    "class": "nk-tb-col tb-col-lg text-right nk-tb-col-tools",
+                    "class": "nk-tb-col  text-right nk-tb-col-tools",
                     data: 'action',
                     name: 'action',
                     orderable: false,

@@ -74,11 +74,11 @@
                                 <input type="checkbox" class="custom-control-input" id="check-all" name="check_all"><label class="custom-control-label" for="check-all"></label>
                             </div>
                         </th>
-                        <th class="nk-tb-col tb-col-mb"><span class="sub-text">Email</span></th>
-                        <th class="nk-tb-col tb-col-md"><span class="sub-text">Subject</span></th>
-                        <th class="nk-tb-col tb-col-md"><span class="sub-text">Grade</span></th>
-                        <th class="nk-tb-col tb-col-md w-1 text-center" nowrap="true"><span class="sub-text">Status</span></th>
-                        <th class="nk-tb-col tb-col-md w-1" nowrap="true"><span class="sub-text">Created At</span></th>
+                        <th class="nk-tb-col"><span class="sub-text">Email</span></th>
+                        <th class="nk-tb-col"><span class="sub-text">Subject</span></th>
+                        <th class="nk-tb-col"><span class="sub-text">Grade</span></th>
+                        <th class="nk-tb-col w-1 text-center" nowrap="true"><span class="sub-text">Status</span></th>
+                        <th class="nk-tb-col w-1" nowrap="true"><span class="sub-text">Created At</span></th>
                         <th class="nk-tb-col nk-tb-col-tools text-right w-1" nowrap="true">
                             <span class="sub-text">Action</span>
                         </th>
@@ -344,7 +344,7 @@
                     url: "{{ url('user') }}",
                 },
                 columns: [{
-                        "class": "nk-tb-col tb-col-lg nk-tb-col-check",
+                        "class": "nk-tb-col  nk-tb-col-check",
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex',
                         orderable: false,
@@ -355,32 +355,32 @@
                     },
                     
                     {
-                        "class": "nk-tb-col tb-col-lg",
+                        "class": "nk-tb-col ",
                         data: 'email',
                         name: 'email'
                     },
                     {
-                        "class": "nk-tb-col tb-col-lg",
+                        "class": "nk-tb-col ",
                         data: 'subject',
                         name: 'subject'
                     },
                     {
-                        "class": "nk-tb-col tb-col-lg",
+                        "class": "nk-tb-col ",
                         data: 'grade',
                         name: 'grade'
                     },
                     {
-                        "class": "nk-tb-col tb-col-lg text-center",
-                        data: 'status',
-                        name: 'status'
+                        "class": "nk-tb-col  text-center",
+                        data: 'verified_at',
+                        name: 'verified_at'
                     },
                     {
-                        "class": "nk-tb-col tb-col-lg",
+                        "class": "nk-tb-col ",
                         data: 'created_at',
                         name: 'created_at'
                     },
                     {
-                        "class": "nk-tb-col tb-col-lg text-right",
+                        "class": "nk-tb-col  text-right",
                         data: 'action',
                         name: 'action',
                         orderable: false,

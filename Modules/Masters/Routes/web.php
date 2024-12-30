@@ -20,6 +20,22 @@ Route::group(['middleware' => [],'prefix' => 'masters'], function () {
         Route::post('/mass-update', 'SubjectController@massUpdate');
     });
 
+    Route::group(['prefix' => 'topic'], function () {
+        Route::get('/', 'TopicController@index');
+        Route::post('/add', 'TopicController@store');
+        Route::get('/get-topic', 'TopicController@getTopic');
+        Route::get('/delete', 'TopicController@destroy');
+        Route::post('/mass-update', 'TopicController@massUpdate');
+    });
+
+    Route::group(['prefix' => 'subtopic'], function () {
+        Route::get('/', 'SubTopicController@index');
+        Route::post('/add', 'SubTopicController@store');
+        Route::get('/get-subtopic', 'SubTopicController@getSubTopic');
+        Route::get('/delete', 'SubTopicController@destroy');
+        Route::post('/mass-update', 'SubTopicController@massUpdate');
+    });
+
     Route::group(['prefix' => 'grade'], function () {
         Route::get('/', 'GradeController@index');
         Route::post('/add', 'GradeController@store');

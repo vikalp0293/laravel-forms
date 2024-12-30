@@ -43,6 +43,36 @@ $currentOrganization = \Session::get('currentOrganization');
                                     @endif
                                 </div>
                             </div>
+
+                            <div class="row g-3 align-center">
+                                <div class="col-lg-5">
+                                    <x-inputs.verticalFormLabel label="First Name" for="first_name" suggestion="Specify the first_name of the user."  />
+                                </div>
+                                <div class="col-lg-7">
+
+
+                                    <input type="first_name" data-parsley-errors-container=".parsley-container-first_name" id="first_name" value="{{ isset($user) ? $user->first_name : old('first_name') }}" name="first_name" maxlength="50" class="form-control" autocomplete="off">
+
+                                    @if ($errors->has('first_name'))
+                                        <span class="text-danger">{{ $errors->first('first_name') }}</span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="row g-3 align-center">
+                                <div class="col-lg-5">
+                                    <x-inputs.verticalFormLabel label="Last Name" for="last_name" suggestion="Specify the last_name of the user."  />
+                                </div>
+                                <div class="col-lg-7">
+
+
+                                    <input type="last_name" data-parsley-errors-container=".parsley-container-last_name" id="last_name" value="{{ isset($user) ? $user->last_name : old('last_name') }}" name="last_name" maxlength="50" class="form-control" autocomplete="off">
+
+                                    @if ($errors->has('last_name'))
+                                        <span class="text-danger">{{ $errors->first('last_name') }}</span>
+                                    @endif
+                                </div>
+                            </div>
                             
                             
                         </div>
@@ -179,6 +209,38 @@ $currentOrganization = \Session::get('currentOrganization');
                                     @endif
                                 </div>
                             </div>
+
+                            <div class="row g-3 align-center">
+                                <div class="col-lg-5">
+                                    <x-inputs.verticalFormLabel label="District" for="district" suggestion="Specify the district of the user."  />
+                                </div>
+                                <div class="col-lg-7">
+
+
+                                    <input type="district" data-parsley-errors-container=".parsley-container-district" id="district" value="{{ isset($user) ? $user->district : old('district') }}" name="district" maxlength="50" class="form-control" autocomplete="off">
+
+                                    @if ($errors->has('district'))
+                                        <span class="text-danger">{{ $errors->first('district') }}</span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="row g-3 align-center">
+                                <div class="col-lg-5">
+                                    <x-inputs.verticalFormLabel label="City" for="city" suggestion="Specify the city of the user."  />
+                                </div>
+                                <div class="col-lg-7">
+
+
+                                    <input type="city" data-parsley-errors-container=".parsley-container-city" id="city" value="{{ isset($user) ? $user->city : old('city') }}" name="city" maxlength="50" class="form-control" autocomplete="off">
+
+                                    @if ($errors->has('city'))
+                                        <span class="text-danger">{{ $errors->first('city') }}</span>
+                                    @endif
+                                </div>
+                            </div>
+
+
                         </div>
                     </div>
                 </div>
@@ -204,7 +266,7 @@ $currentOrganization = \Session::get('currentOrganization');
                                 <div class="col-lg-7">
 
                                     @php
-                                        if(isset($user) && $user->status){
+                                        if(isset($user) && !is_null($user->verified_at)){
                                             $checked = 'true';
                                         }else{
                                             $checked = '';

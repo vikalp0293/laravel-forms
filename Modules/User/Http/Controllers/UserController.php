@@ -52,7 +52,7 @@ class UserController extends Controller
         $role = $authUser->getRoleNames()->toArray();
 
         $data = User::from('users as u')
-                ->select('u.id','u.name','u.email','u.phone_number','u.created_at','u.updated_at','r.name as role','r.label as roleName','u.status','s.name as subject','g.name as grade')
+                ->select('u.id',DB::raw("concat(u.first_name, ' ', u.last_name) as name"),'u.email','u.phone_number','u.created_at','u.updated_at','r.name as role','r.label as roleName','u.status','u.verified_at','s.name as subject','g.name as grade')
                 ->leftJoin('model_has_roles as mr','mr.model_id','=','u.id')
                 ->leftJoin('roles as r','mr.role_id','=','r.id')
                 ->leftJoin('m_subjects as s','s.id','=','u.subject_id')
@@ -137,6 +137,26 @@ class UserController extends Controller
                         ';
                         return $status;
                     })
+
+                    ->addColumn('verified_at', function ($row) {
+                        if(!is_null($row->verified_at)){
+                            $statusValue = 'Active';
+                        }else{
+                            $statusValue = 'Inactive';
+                        }
+
+                        $value = (!is_null($row->verified_at)) ? 'badge badge-success' : 'badge badge-danger';
+                        $status = '
+                            <span class="tb-sub">
+                                <span class="'.$value.'">
+                                    '.$statusValue.'
+                                </span>
+                            </span>
+                        ';
+                        return $status;
+                    })
+
+
                     ->addColumn('action', function($row) use ($userPermission){
                            $edit = url('/').'/user/edit/'.$row->id;
                            $delete = url('/').'/user/delete/'.$row->id;
@@ -182,12 +202,62 @@ class UserController extends Controller
                     ->addColumn('created_at', function ($row) {
                         return date(\Config::get('constants.DATE.DATE_FORMAT') , strtotime($row->created_at));
                     })
-                    ->rawColumns(['action','created_at','name','updated_at','status',])
+                    ->rawColumns(['action','created_at','name','updated_at','status','verified_at'])
                     ->make(true);
         }
 
 
         return view('user::index')->with(compact('usersCount'));
+    }
+
+    public function getStateByCountry($country_id)
+    {
+        $states   =   State::where('country_id',$country_id)->orderBy('name','asc')->get();  
+        if(!empty($states->toArray())){
+            return $arrayName = array('states' => $states);
+        }else{
+            return false;
+        }
+    }
+
+    
+    public function sendVerificationEmail($email)
+    {
+        $authUser = Auth::user();
+
+        $authUser->temp_email = $email;
+        $authUser->save();
+
+        $verify_link = url('/profile/verify-email/' . $authUser->id);
+
+        $mailBody = '<a href="' . $verify_link . '" target="_blank" rel="noopener" title="reset password" style="text-decoration: none; font-size: 16px; color: #fff; background: #FF8000; border-radius: 5px;display: block;text-align: center;padding: 15px 5px; float:left; width: 25%;" margin-top:10px;> Verify Account </a>';
+        $to_name = $email;
+        $to_email = $email;
+        $mailSubject = 'Verify Your Account';
+        $data = array('name' => $to_name, "body" => $mailBody, 'mailSubject' => $mailSubject);
+
+        \Mail::send('emails.email_template', $data, function ($message) use ($to_name, $to_email, $mailBody, $mailSubject) {
+            $message->to($to_email, $to_name)
+                ->subject($mailSubject)
+                ->from(env('MAIL_FROM'), 'Laravel Forms');
+        });        
+    }
+
+    public function verifyEmail($user_id){
+
+        $user = User::where('id',$user_id)->first();
+        if($user){
+
+            $user->verified_at = date('Y-m-d H:i:s');
+            $user->email = $user->temp_email;
+
+            if($user->save()){
+                return redirect('profile')->with('message', 'Email verified successfully');
+            }
+
+        }else{
+            return redirect()->route('register')->with('error', 'User not found');
+        }
     }
 
     /**
@@ -203,46 +273,12 @@ class UserController extends Controller
                     ->where('u.id',$authUser->id)
                     ->first();
 
-        return view('user::profile/index')->with(compact('user'));
-    }
+        $subjects   = Subject::where('status','active')->orderBy('name','asc')->get();
+        $grades     = Grade::where('status','active')->orderBy('name','asc')->get();
+        $countries  = Country::where('status','active')->orderBy('name','asc')->get();
+        $states = State::where('status','active')->orderBy('name','asc')->get();
 
-    public function profileAddress(Request $request)
-    {
-        $authUser = Auth::user();
-
-        $user =     User::from('users as u')
-                    ->select('u.*','s.name as stateName','c.name as cityName','d.name as districtName')
-                    ->leftJoin('states as s','s.id','=','u.state')
-                    ->leftJoin('cities as c','c.id','=','u.city')
-                    ->leftJoin('districts as d','d.id','=','u.district')
-                    ->where('u.id',$authUser->id)
-                    ->first();
-        $states             =   State::all();
-        $districts          =   District::where('state_id',$user->state)->orderby('name','asc')->get();
-        $cities             =   City::where('district_id',$user->district)->orderby('name','asc')->get();
-
-        return view('user::profile/address')->with(compact('user','states','districts','cities'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     * @return Renderable
-     */
-    public function updateProfileAddress(Request $request)
-    {
-        $user = Auth::user();
-        $user->address1 = $request->address1;
-        $user->address2 = $request->address2;
-        $user->state = $request->state;
-        $user->district = $request->district;
-        $user->city = $request->city;
-        $user->pincode = $request->pincode;
-
-        if($user->save()){
-            return redirect('profile/address')->with('message', trans('messages.ADDRESS_UPDATED_SUCCESS'));
-        }else{
-            return redirect('profile/address')->with('error', trans('messages.SOMETHING_WENT_WRONG'));
-        }
+        return view('user::profile/index')->with(compact('user','subjects','grades','countries','states'));
     }
 
     /**
@@ -253,53 +289,16 @@ class UserController extends Controller
     {
         $user = Auth::user();
 
-        $user->name = $request->name;
+        $user->first_name = $request->first_name;
         $user->last_name = $request->last_name;
-        /*$user->address1 = $request->address1;
-        $user->address2 = $request->address2;
+        $user->grade_id = $request->grade;
+        $user->subject_id = $request->subject;
+        $user->country = $request->country_id;
         $user->state = $request->state;
         $user->district = $request->district;
         $user->city = $request->city;
-        $user->pincode = $request->pincode;*/
 
-        if ($request->hasFile('file')) {
-
-            $image1 = $request->file('file');
-            $image1NameWithExt = $image1->getClientOriginalName();
-            list($image1_width,$image1_height)=getimagesize($image1);
-            // Get file path
-            $originalName = pathinfo($image1NameWithExt, PATHINFO_FILENAME);
-            $image1Name = pathinfo($image1NameWithExt, PATHINFO_FILENAME);
-            // Remove unwanted characters
-            $image1Name = preg_replace("/[^A-Za-z0-9 ]/", '', $image1Name);
-            $image1Name = preg_replace("/\s+/", '-', $image1Name);
-
-            // Get the original image extension
-            $extension  = $image1->getClientOriginalExtension();
-
-            if($extension != 'jpg' && $extension != 'jpeg' && $extension != 'png'){
-                return redirect('profile')->with('error', trans('messages.INVALID_IMAGE'));
-            }
-
-            $image1Name = $image1Name.'_'.time().'.'.$extension;
-            
-            $destinationPath = public_path('uploads/users');
-            if($image1_width > 800){
-                $image1_canvas = Image::canvas(800, 800);
-                $image1_image = Image::make($image1->getRealPath())->resize(800, 800, function ($constraint) {
-                    $constraint->aspectRatio();
-                    $constraint->upsize();
-                });
-                $image1_canvas->insert($image1_image, 'center');
-                $image1_canvas->save($destinationPath.'/'.$image1Name,80);
-            }else{
-                $image1->move($destinationPath, $image1Name);
-            }
-            $image1_file = public_path('uploads/users/'. $image1Name);
-
-            $user->file = $image1Name;
-            $user->original_name = $image1NameWithExt;
-        }
+        \Session::put('name', $request->first_name . ' ' . $request->last_name);
 
         if($user->save()){
             return redirect('profile')->with('message', trans('messages.PROFILE_UPDATED_SUCCESS'));
@@ -369,106 +368,6 @@ class UserController extends Controller
             return redirect('profile/setting')->with('error', trans('messages.SOMETHING_WENT_WRONG'));
         }
     }
-    
-
-    /**
-     * Store a newly created resource in storage.
-     * @param Request $request
-     * @return Renderable
-     */
-    public function storeStaff(Request $request)
-    {   
-        $authUser = \Auth::user();
-
-        $checkUser = User::where('email',$request->input("email"))->first();
-        if($checkUser){
-            return redirect('user/staff/create-staff')->with('error', 'Email already exists');
-        }
-
-        $staff_limit = \Session::get('staff_limit');
-        $seller_limit = \Session::get('seller_limit');
-
-        $roleData = Role::where('id',$request->input("role"))->first();
-        
-        DB::beginTransaction();
-        $user = new User();
-
-        if ($request->hasFile('file')) {
-
-            $image1 = $request->file('file');
-            $image1NameWithExt = $image1->getClientOriginalName();
-            list($image1_width,$image1_height)=getimagesize($image1);
-            // Get file path
-            $originalName = pathinfo($image1NameWithExt, PATHINFO_FILENAME);
-            $image1Name = pathinfo($image1NameWithExt, PATHINFO_FILENAME);
-            // Remove unwanted characters
-            $image1Name = preg_replace("/[^A-Za-z0-9 ]/", '', $image1Name);
-            $image1Name = preg_replace("/\s+/", '-', $image1Name);
-
-            // Get the original image extension
-            $extension  = $image1->getClientOriginalExtension();
-            if($extension != 'jpg' && $extension != 'jpeg' && $extension != 'png'){
-                return redirect('user/staff')->with('error', trans('messages.INVALID_IMAGE'));
-            }
-            $image1Name = $image1Name.'_'.time().'.'.$extension;
-            
-            $destinationPath = public_path('uploads/users');
-            if($image1_width > 800){
-                $image1_canvas = Image::canvas(800, 800);
-                $image1_image = Image::make($image1->getRealPath())->resize(800, 800, function ($constraint) {
-                    $constraint->aspectRatio();
-                    $constraint->upsize();
-                });
-                $image1_canvas->insert($image1_image, 'center');
-                $image1_canvas->save($destinationPath.'/'.$image1Name,80);
-            }else{
-                $image1->move($destinationPath, $image1Name);
-            }
-            $image1_file = public_path('uploads/users/'. $image1Name);
-
-            $user->file = $image1Name;
-            $user->original_name = $image1NameWithExt;
-        }
-
-        
-        $user->name                 = $request->exists("name") ? $request->input("name") : "";
-        $user->email                = $request->exists("email") ? $request->input("email") : "";
-        $user->password             = \Hash::make($request->input("password"));
-        $user->phone_number         = $request->exists("mobileNumber") ? $request->input("mobileNumber") : "";
-        $user->is_approved          = 1;
-
-        if($request->exists("approved") && $request->input("approved") == 1){
-            $user->status           = 1;
-        }else{
-            $user->status           = 0;
-        }
-
-        if($user->save()){
-
-            $roleLable = ucfirst(str_replace('_', ' ', $request->input("role")));
-            $msg = trans('messages.ADDED_SUCCESSFULLY');
-
-            //Assign role to the user
-            // $user->assignRole($request->input("role"));
-            $modelRole = new ModelRole();
-            $modelRole->role_id = $request->input("role");
-            $modelRole->model_type = 'Modules\User\Entities\User';
-            $modelRole->model_id = $user->id;
-            $modelRole->save();
-
-            if($user->id){
-                DB::commit();
-                return redirect('user/staff')->with('message', $msg);
-            }else{
-                return redirect('user/staff')->with('error', trans('messages.SOMETHING_WENT_WRONG'));
-            }
-        } else{
-            DB::rollback();
-            return redirect('user/staff')->with('error', trans('messages.SOMETHING_WENT_WRONG'));
-        }
-    }
-
-    
 
     /**
      * Show the form for editing the specified resource.
@@ -529,16 +428,20 @@ class UserController extends Controller
                     ->where('u.id',$id)
                     ->first();
 
+            $user->first_name                = $request->exists("first_name") ? $request->input("first_name") : "";
+            $user->last_name                = $request->exists("last_name") ? $request->input("last_name") : "";
             $user->email                = $request->exists("email") ? $request->input("email") : "";
             $user->subject_id                = $request->exists("subject") ? $request->input("subject") : "";
             $user->grade_id                = $request->exists("grade") ? $request->input("grade") : "";
             $user->country                = $request->exists("country") ? $request->input("country") : "";
             $user->state                = $request->exists("state") ? $request->input("state") : "";
+            $user->district                = $request->exists("district") ? $request->input("district") : "";
+            $user->city                = $request->exists("city") ? $request->input("city") : "";
 
             if($request->exists("status") && $request->input("status") == 1){
-                $user->status           = 1;
+                $user->verified_at           = date('Y-m-d H:i:s');
             }else{
-                $user->status           = 0;
+                $user->verified_at           = null;
             }
 
             if($user->save()){
@@ -552,25 +455,6 @@ class UserController extends Controller
         }
     }
 
-    
-
-    /**
-     * Remove the specified resource from storage.
-     * @param int $id
-     * @return Renderable
-     */
-    public function destroyStaff($id)
-    {
-
-
-
-        $user = User::findorfail($id);
-        if($user->forceDelete()){
-            return redirect('user/staff')->with('message', trans('messages.USER_DELETED_SUCCESS'));
-        }else{
-            return redirect('user/staff')->with('error', trans('messages.SOMETHING_WENT_WRONG'));
-        }
-    }
     /**
      * Remove the specified resource from storage.
      * @param int $id
@@ -588,64 +472,17 @@ class UserController extends Controller
         }
     }
 
-    
-
-    /**
-     * Remove the specified resource from storage.
-     * @param int $id
-     * @return Renderable
-     */
-    public function staffBulkUpdate(Request $request)
+    public function destroy($id)
     {
-        $authUser = \Auth::user();
-        $update = User::whereIn('id',$request->ids)->update(['status' => $request->status]);
-        if($update){
-            return array('success'=>true,'item' => array(),'msg'=>'true');
+
+
+
+        $user = User::findorfail($id);
+        if($user->forceDelete()){
+            return redirect('user')->with('message', trans('messages.USER_DELETED_SUCCESS'));
         }else{
-            return array('success'=>false,'item'=>array(),'msg'=>'No update required');
+            return redirect('user')->with('error', trans('messages.SOMETHING_WENT_WRONG'));
         }
-    }
-
-
-    public function getBrandByOrganization(Request $request)
-    {
-        $organizations = explode(',', $request->organizations);
-
-        $organization_type = \Session::get('organization_type');
-        if(isset($organization_type) && $organization_type == 'MULTIPLE'){
-            $brands = Brand::select('name','id')->where('status','active')->whereIn('organization_id',$organizations)->get();  
-        }else{
-            $brands = Brand::select('name','id')->where('status','active')->get();
-        }
-
-        
-        if(!empty($brands->toArray())){
-            return array('brands' => $brands,'success'=>true);
-        }else{
-            return array('success'=>false,'brands'=>array());
-        }
-    }
-
-    public function setOrganization(Request $request)
-    {
-        $currentOrganization = \Session::get('currentOrganization');
-        $currentOrganizationName = \Session::get('currentOrganizationName');
-
-        $newOrgName = $request->org_name;
-        $newOrgId = $request->org_id;
-
-        session()->put('currentOrganization', $newOrgId);
-        session()->put('currentOrganizationName', $newOrgName);
-        if($newOrgId != $currentOrganization){
-            return array('success'=>true);
-        }else{
-            return array('success'=>false);
-        }
-    }
-
-    public function import(Request $request)
-    {
-        return view('user::import');
     }
 
 }

@@ -18,10 +18,10 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
-
+    <script src='https://www.google.com/recaptcha/api.js'></script>
  
     <link id="skin-default" rel="stylesheet" href="{{url('css/theme.css')}}">
-    {!! RecaptchaV3::initJs() !!}
+    
 
     <style type="text/css">
         .text-danger {
@@ -91,25 +91,14 @@
                                         <form method="POST" action="{{ url('registeruser') }}">
                                             @csrf
                                             <div class="row">
-                                                <!-- <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <div class="form-label-group">
-                                                            <label class="form-label" for="name">Full Name <span class="text-danger">*</span></label>
-                                                        </div>
-                                                        <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autofocus>
-                                                        @error('name')
-                                                            <span class="invalid-feedback" role="alert">
-                                                                <strong>{{ $message }}</strong>
-                                                            </span>
-                                                        @enderror
-                                                    </div>
-                                                </div> -->
                                                 <div class="col-md-6">
                                                     <div class="form-group">
                                                         <div class="form-label-group">
                                                             <label class="form-label" for="email">E-Mail <span class="text-danger">*</span></label>
                                                         </div>
-                                                        <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required>
+                                                        <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required
+                                                        onchange="validateEmail()">
+                                                        <small id="email-error" class="text-danger"></small>
                                                         @error('email')
                                                             <span class="invalid-feedback" role="alert">
                                                                 <strong>{{ $message }}</strong>
@@ -213,7 +202,7 @@
                                                             <select size="sm" class="form-select form-control form-control-lg" data-placeholder="Select Country" data-parsley-errors-container=".categoryParsley" name="country_id" id="parentCat" data-search='on' onchange="getStates(this.options[this.selectedIndex].value)" required> 
                                                                 <option value="" selected disabled>Select Country</option>
                                                                 @foreach($countries as $id => $country)
-                                                                    <option value="{{ $country->id }}">{{ $country->name }}</option>
+                                                                    <option @if($country->id == 209) selected @endif value="{{ $country->id }}">{{ $country->name }}</option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
@@ -225,7 +214,7 @@
                                                             <label class="form-label" for="state">State <span class="text-danger">*</span></label>
                                                         </div>
                                                         <div class="form-control-wrap">
-                                                            <select id="state" name="state" class="form-control @error('state') is-invalid @enderror" required>
+                                                            <select id="state" name="state" data-placeholder="Select State" data-search='on' class="form-select form-control @error('state') is-invalid @enderror" required>
                                                                 <option value="" selected disabled> Select State </option>
                                                             </select>
                                                         </div>
@@ -240,9 +229,7 @@
                                                             <label class="form-label" for="dob">Date of Birth <span class="text-danger">*</span></label>
                                                         </div>
                                                         <div class="form-control-wrap">
-                                                            <!-- <x-inputs.datePicker for="dob" size="sm" placeholder="Select Date" name="dob" id="dob" icon="calendar" required='true' onchange="validateAge(this)"/> -->
-
-                                                            <input required="true" type="text" class="form-control date-picker" id="dob" value="" placeholder="Select Date" name="dob" onchange="validateAge(this)">
+                                                            <input required="true" type="text" class="form-control date-picker" id="dob" value="" placeholder="Select Date" name="dob" onchange="validateAge(this)" autocomplete="off">
 
                                                             <small id="dob-error" class="text-danger"></small>
                                                             @error('dob')
@@ -254,7 +241,22 @@
                                                     </div>
                                                 </div>
 
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <div class="form-label-group">
+                                                            
+                                                        </div>
+                                                        <div class="form-control-wrap">
+                                                            <div class="g-recaptcha" data-sitekey="{{ env('GOOGLE_RECAPTCHA_KEY') }}"></div>
+                                                            @if ($errors->has('g-recaptcha-response'))
+                                                                <span class="text-danger">{{ $errors->first('g-recaptcha-response') }}</span>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
 
+                                            <div class="row">
                                                 <div class="col-md-6" style="margin-top: 30px;">
                                                     <div class="form-group">
                                                         <div class="form-label-group">
@@ -270,18 +272,8 @@
                                                         @enderror
                                                     </div>
                                                 </div>
-                                                
-                                                <div class="form-group{{ $errors->has('g-recaptcha-response') ? ' has-error' : '' }}">
-                                                    <div class="col-md-6">
-                                                        {!! RecaptchaV3::field('register') !!}
-                                                        @if ($errors->has('g-recaptcha-response'))
-                                                            <span class="help-block">
-                                                                <strong>{{ $errors->first('g-recaptcha-response') }}</strong>
-                                                            </span>
-                                                        @endif
-                                                    </div>
-                                                </div>
                                             </div>
+
                                             <br>          
                                             <div class="form-group">
                                                 <button type="submit" class="btn btn-lg btn-orange btn-block">Register</button>
@@ -307,6 +299,100 @@
     <script>
         $(document).ready(function(){
             $('form').parsley();
+            grecaptcha.reset();
+
+            getStates(209); //to set the states of united states by default
+        });
+
+        function validateEmail() {
+            const bannedDomains = [
+                "hotmail.com",
+                "mail.ru",
+                "example.com",
+                "10minutemail.com",
+                "mailinator.com",
+                "guerrillamail.com",
+                "dispostable.com",
+                "sharklasers.com",
+                "temp-mail.org",
+                "getnada.com",
+                "trashmail.com",
+                "fakeinbox.com",
+                "throwawaymail.com",
+                "maildrop.cc",
+                "tempinbox.com",
+                "protonmail.com", 
+                "tutanota.com",
+                "hushmail.com",
+                "spamgourmet.com",
+                "mailnesia.com",
+                "mytrashmail.com",
+                "mintemail.com",
+                "mailcatch.com",
+                "fakemail.net",
+                "spambog.com",
+                "trashmail.net",
+                "disposableemailaddresses.com",
+                "dodsi.com",
+                "easytrashmail.com",
+                "fastmail.com",
+                "fakebox.org",
+                "tempmailaddress.com",
+                "burnermail.io",
+                "anonymousemail.me",
+                "inboxbear.com",
+                "inboxkitten.com"
+            ];
+            const bannedSubstrings = ["stu", "student", "students"];
+            const emailField = document.getElementById('email');
+            const emailError = document.getElementById('email-error');
+            const email = emailField.value.trim().toLowerCase();
+
+            // Reset previous error
+            emailError.textContent = '';
+            emailField.classList.remove('is-invalid');
+
+            // Extract local part and domain from email
+            const [localPart, domain] = email.split('@');
+            if (!domain) {
+                emailError.textContent = "Invalid email format.";
+                emailField.classList.add('is-invalid');
+                return false;
+            }
+
+            // Check if the domain is in the banned domains list
+            if (bannedDomains.includes(domain)) {
+                emailError.textContent = "This email domain is not allowed.";
+                emailField.classList.add('is-invalid');
+                return false;
+            }
+
+            // Check if email contains banned substrings in the local part
+            for (const substring of bannedSubstrings) {
+                if (localPart.includes(substring)) {
+                    emailError.textContent = "Email address cannot contain 'stu', 'student', or 'students'.";
+                    emailField.classList.add('is-invalid');
+                    return false;
+                }
+            }
+
+            // Check if email contains banned substrings in the domain
+            for (const substring of bannedSubstrings) {
+                if (domain.includes(substring)) {
+                    emailError.textContent = "Email domain cannot contain 'stu', 'student', or 'students'.";
+                    emailField.classList.add('is-invalid');
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        // Validate on form submit
+        document.querySelector('form').addEventListener('submit', function (e) {
+            if (!validateEmail()) {
+                e.preventDefault(); // Prevent form submission if validation fails
+            }
         });
 
         function validateAge(input) {

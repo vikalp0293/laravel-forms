@@ -13,6 +13,7 @@ use Modules\Masters\Entities\Country;
 use Modules\Masters\Entities\Subject;
 use Modules\Masters\Entities\Grade;
 use Modules\User\Entities\ModelRole;
+use Illuminate\Support\Facades\Http;
 
 
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
@@ -111,26 +112,40 @@ class RegisterController extends Controller
         ]);
     }
 
-    public function registerUser(Request $request){
-        request()->validate([
+    public function registerUser(Request $request)
+    {
+        // Validate other input fields first
+        $request->validate([
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'g-recaptcha-response' => 'required|recaptchav3:register,0.5'
+            'g-recaptcha-response' => 'required' // Ensure reCAPTCHA response is present
+        ]);
+        // Verify the reCAPTCHA response
+        $recaptchaResponse = $request->input('g-recaptcha-response');
+        $recaptchaSecret = env('GOOGLE_RECAPTCHA_SECRET'); // Your secret key from the .env file
+        $verificationResponse = Http::get('https://www.google.com/recaptcha/api/siteverify', [
+            'secret' => $recaptchaSecret,
+            'response' => $request->input('g-recaptcha-response'),
         ]);
 
+        // Parse the response
+        $verificationData = $verificationResponse->json();
 
+        if (!$verificationData['success']) {
+            return redirect()->back()->withErrors(['g-recaptcha-response' => 'reCAPTCHA verification failed. Please try again.']);
+        }
+
+        // Create the user
         $user = new User();
-        // $user->name                 = $request->name;
-        $user->email                = $request->email;
-        $user->password             = Hash::make($request->input("password"));
-        $user->subject_id                = $request->subject;
-        $user->grade_id                = $request->grade;
-        $user->country                = $request->country_id;
-        $user->state                = $request->state;
-        $user->dob                = date('Y-m-d', strtotime($request->dob));
+        $user->email = $request->email;
+        $user->password = Hash::make($request->input("password"));
+        $user->subject_id = $request->subject;
+        $user->grade_id = $request->grade;
+        $user->country = $request->country_id;
+        $user->state = $request->state;
+        $user->dob = date('Y-m-d', strtotime($request->dob));
 
-        if($user->save()){
-
+        if ($user->save()) {
             $modelRole = new ModelRole();
             $modelRole->role_id = 2;
             $modelRole->model_type = 'Modules\User\Entities\User';
@@ -154,10 +169,9 @@ class RegisterController extends Controller
             return redirect()
                 ->route('register')
                 ->with('success', 'Registration successful! Please verify your email to activate your account.');
-        }else{
+        } else {
             return redirect()->route('register')->with('error', 'Failed to register. Please try again.');
         }
-        
     }
 
     protected function create(array $data)

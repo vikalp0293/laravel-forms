@@ -12,8 +12,6 @@
 */
 
 Route::prefix('user')->group(function() {
-    Route::get('/set-organization', 'UserController@setOrganization');
-    Route::post('/set-organization', 'UserController@setUserOrganization');
 
     Route::get('/', 'UserController@index');
     Route::get('/new', 'UserController@newUsers');
@@ -24,9 +22,7 @@ Route::prefix('user')->group(function() {
     Route::get('/edit/{user_id}', 'UserController@edit');
     Route::post('/edit/{user_id}', 'UserController@update');
     Route::get('/delete/{user_id}', 'UserController@destroy');
-    Route::get('cities/{district_id}', 'UserController@cities');
-    Route::get('districts/{state_id}', 'UserController@districts');
-    Route::get('remove-image/{user_image}', 'UserController@removeImage');
+    
     Route::get('/import', 'UserController@import');
     
     Route::get('/activity-logs', 'UserController@activityLogs');
@@ -34,10 +30,6 @@ Route::prefix('user')->group(function() {
     Route::post('/update-user-password', 'UserController@updateUserPassword');
 
     Route::get('/detail/{user_id}', 'UserController@show');
-    Route::get('/address/{user_id}', 'UserController@address');
-    Route::get('/address-details/{address_id}', 'UserController@addressDetails');
-    Route::post('/address/{user_id}', 'UserController@addressUpdate');
-    Route::get('/address/remove/{address_id}', 'UserController@removeAddress');
     Route::post('/check-user', 'UserController@checkUser');    
     
 });
@@ -45,10 +37,8 @@ Route::prefix('user')->group(function() {
 Route::get('/profile', 'UserController@profile');
 Route::post('/profile', 'UserController@updateProfile');
 Route::get('/profile/notification', 'UserController@notification');
-Route::get('/profile/activity', 'UserController@activity');
+Route::get('/profile/get-states/{id}', 'UserController@getStateByCountry');
+Route::get('/profile/trigger-verification-email/{email}', 'UserController@sendVerificationEmail');
+Route::get('/profile/verify-email/{id}', 'UserController@verifyEmail');
 Route::get('/profile/setting', 'UserController@setting');
 Route::post('/profile/setting', 'UserController@updatePassword');
-Route::get('/notification', 'UserController@notifications');
-
-Route::get('/profile/address', 'UserController@profileAddress');
-Route::post('/profile/address', 'UserController@updateProfileAddress');

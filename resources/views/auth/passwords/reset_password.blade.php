@@ -9,7 +9,7 @@
     <!-- Fav Icon  -->
     <link rel="shortcut icon" href="./images/favicon.png">
     <!-- Page Title  -->
-    <title>Forgot Password | SevenUPP</title>
+    <title>Forgot Password</title>
     <!-- StyleSheets  -->
     <link rel="stylesheet" href="{{url('css/dashlite.css')}}">
     <link id="skin-default" rel="stylesheet" href="{{url('css/theme.css')}}">
@@ -31,12 +31,12 @@
                                                 <img class="logo-dark logo-img logo-img-lg" src="{{url('images/logo-dark.png')}}" srcset="{{url('images/logo-dark.png')}}" alt="logo-dark">
                                             </a>
                                         </div>
-                                        <h5 class="nk-block-title">Cloud B2B Order Management Application for Single or Multi-brand Distribution Companies</h5>
+                                        
                                         <div class="login-graphic m-hide">
                                             <img src="{{url('images/b2b.png')}}" alt="" />
                                         </div>
                                         <div class="login-form-bottom">
-                                            <h5>A simple and powerful App to automate and accelerate your business</h5>
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -95,7 +95,8 @@
                                             <input type="hidden" name="token" value="{{ $token }}">
 
                                             <div class="form-group">
-                                                <button class="btn btn-lg btn-primary btn-block">Reset Password</button>
+                                                <button class="btn btn-lg btn-orange btn-block">Reset Password</button>
+                                                
                                             </div>
                                         </form><!-- form -->
                                         <div class="form-note-s2 pt-5">

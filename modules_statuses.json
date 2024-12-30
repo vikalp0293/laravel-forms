@@ -3,5 +3,7 @@
     "Masters": true,
     "User": true,
     "Hotels": true,
-    "Administration": true
+    "Administration": true,
+    "Forms": false,
+    "Exams": true
 }

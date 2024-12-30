@@ -1,4 +1,5 @@
 @php
+$user_tier = \Session::get('user_tier');
 $userRole = \Session::get('role');
 $userRole = $userRole[0];
 @endphp
@@ -41,22 +42,6 @@ $userRole = $userRole[0];
                             <span class="nk-menu-text">Users</span>
                         </a>
                     </li>
-                   
-
-                    <!-- <li class="nk-menu-item has-sub">
-                        <a href="#" class="nk-menu-link nk-menu-toggle">
-                            <span class="nk-menu-icon"><em class="icon ni ni-users-fill"></em></span>
-                            <span class="nk-menu-text">Users</span>
-                        </a>
-                        <ul class="nk-menu-sub">
-                            <li class="nk-menu-item">
-                                <a href="{{url('user')}}" class="nk-menu-link"><span class="nk-menu-text">Customers</span></a>
-                            </li>
-                            <li class="nk-menu-item">
-                                <a href="{{url('user/staff/')}}" class="nk-menu-link"><span class="nk-menu-text">Staff</span></a>
-                            </li>
-                        </ul>
-                    </li> -->
 
                     <li class="nk-menu-item has-sub">
                         <a href="#" class="nk-menu-link nk-menu-toggle">
@@ -64,13 +49,20 @@ $userRole = $userRole[0];
                             <span class="nk-menu-text">Masters</span>
                         </a>
                         <ul class="nk-menu-sub">
-                            
+                            <li class="nk-menu-item">
+                                <a href="{{url('/masters/grade')}}" class="nk-menu-link"><span class="nk-menu-text">Grades</span></a>
+                            </li>
+
                             <li class="nk-menu-item">
                                 <a href="{{url('/masters/subject')}}" class="nk-menu-link"><span class="nk-menu-text">Subjects</span></a>
                             </li>
 
                             <li class="nk-menu-item">
-                                <a href="{{url('/masters/grade')}}" class="nk-menu-link"><span class="nk-menu-text">Grades</span></a>
+                                <a href="{{url('masters/topic')}}" class="nk-menu-link"><span class="nk-menu-text">Topics</span></a>
+                            </li>
+
+                            <li class="nk-menu-item">
+                                <a href="{{url('masters/subtopic')}}" class="nk-menu-link"><span class="nk-menu-text">Subtopics</span></a>
                             </li>
 
                             <li class="nk-menu-item">
@@ -87,6 +79,34 @@ $userRole = $userRole[0];
 
                     @endif
                     
+                    <li class="nk-menu-item has-sub">
+                        <a href="#" class="nk-menu-link nk-menu-toggle">
+                            <span class="nk-menu-icon"><em class="icon ni ni-users-fill"></em></span>
+                            <span class="nk-menu-text">Exams</span>
+                        </a>
+                        <ul class="nk-menu-sub">
+                            <li class="nk-menu-item">
+                                <a href="{{url('exams')}}" class="nk-menu-link"><span class="nk-menu-text">Manage</span></a>
+                            </li>
+                            
+                        </ul>
+                    </li>
+
+                    <li class="nk-menu-item has-sub">
+                        <a href="#" class="nk-menu-link nk-menu-toggle">
+                            <span class="nk-menu-icon"><em class="icon ni ni-users-fill"></em></span>
+                            <span class="nk-menu-text">Settings</span>
+                        </a>
+                        <ul class="nk-menu-sub">
+                            <li class="nk-menu-item">
+                                <a href="{{url('profile')}}" class="nk-menu-link"><span class="nk-menu-text">Profile</span></a>
+                            </li>
+                            
+                            <li class="nk-menu-item">
+                                <a href="{{url('profile/setting')}}" class="nk-menu-link"><span class="nk-menu-text">Password</span></a>
+                            </li>
+                        </ul>
+                    </li>
                     
                 </ul>
             </div><!-- .nk-sidebar-menu -->
