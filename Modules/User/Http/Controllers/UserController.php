@@ -52,7 +52,7 @@ class UserController extends Controller
         $role = $authUser->getRoleNames()->toArray();
 
         $data = User::from('users as u')
-                ->select('u.id',DB::raw("concat(u.first_name, ' ', u.last_name) as name"),'u.email','u.phone_number','u.created_at','u.updated_at','r.name as role','r.label as roleName','u.status','u.verified_at','s.name as subject','g.name as grade')
+                ->select('u.id',DB::raw("concat(u.first_name, ' ', u.last_name) as name"),'u.email','u.phone_number','u.created_at','u.updated_at','last_login','last_login_ip','total_logins','r.name as role','r.label as roleName','u.status','u.verified_at','s.name as subject','g.name as grade')
                 ->leftJoin('model_has_roles as mr','mr.model_id','=','u.id')
                 ->leftJoin('roles as r','mr.role_id','=','r.id')
                 ->leftJoin('m_subjects as s','s.id','=','u.subject_id')
@@ -202,7 +202,16 @@ class UserController extends Controller
                     ->addColumn('created_at', function ($row) {
                         return date(\Config::get('constants.DATE.DATE_FORMAT') , strtotime($row->created_at));
                     })
-                    ->rawColumns(['action','created_at','name','updated_at','status','verified_at'])
+
+                    ->addColumn('last_login', function ($row) {
+                        if(is_null($row->last_login)){
+                            return "NA";
+                        }else{
+                            return date(\Config::get('constants.DATE.DATE_FORMAT_FULL') , strtotime($row->last_login));
+                        }
+                    })
+
+                    ->rawColumns(['action','created_at','name','updated_at','status','verified_at','last_login'])
                     ->make(true);
         }
 

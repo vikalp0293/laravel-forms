@@ -54,6 +54,7 @@ class RegisterController extends Controller
 
     public function showRegistrationForm()
     {
+
         $subjects = Subject::where('status','active')->orderBy('name','asc')->get();
         $grades = Grade::where('status','active')->orderBy('name','asc')->get();
         $countries = Country::where('status','active')->orderBy('name','asc')->get();
@@ -67,7 +68,7 @@ class RegisterController extends Controller
     }
 
     public function verifyUser($user_id){
-        $user = User::where('id',$user_id)->first();
+        $user = User::where('uuid',$user_id)->first();
         if($user){
             if(!is_null($user->verified_at)){
                 return redirect()->route('login')->with('error', 'User already verified');
@@ -137,6 +138,7 @@ class RegisterController extends Controller
 
         // Create the user
         $user = new User();
+        $user->uuid = \Str::uuid();
         $user->email = $request->email;
         $user->password = Hash::make($request->input("password"));
         $user->subject_id = $request->subject;
@@ -152,7 +154,7 @@ class RegisterController extends Controller
             $modelRole->model_id = $user->id;
             $modelRole->save();
 
-            $verify_link = url('/verify-account/' . $user->id);
+            $verify_link = url('/verify-account/' . $user->uuid);
 
             $mailBody = '<a href="' . $verify_link . '" target="_blank" rel="noopener" title="reset password" style="text-decoration: none; font-size: 16px; color: #fff; background: #FF8000; border-radius: 5px;display: block;text-align: center;padding: 15px 5px; float:left; width: 25%;" margin-top:10px;> Verify Account </a>';
             $to_name = $user->email;

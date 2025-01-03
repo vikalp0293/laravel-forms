@@ -77,6 +77,9 @@
                         <th class="nk-tb-col"><span class="sub-text">Email</span></th>
                         <th class="nk-tb-col"><span class="sub-text">Subject</span></th>
                         <th class="nk-tb-col"><span class="sub-text">Grade</span></th>
+                        <th class="nk-tb-col"><span class="sub-text">Last Login At</span></th>
+                        <th class="nk-tb-col"><span class="sub-text">Last Login IP</span></th>
+                        <th class="nk-tb-col"><span class="sub-text">Total Login</span></th>
                         <th class="nk-tb-col w-1 text-center" nowrap="true"><span class="sub-text">Status</span></th>
                         <th class="nk-tb-col w-1" nowrap="true"><span class="sub-text">Created At</span></th>
                         <th class="nk-tb-col nk-tb-col-tools text-right w-1" nowrap="true">
@@ -368,6 +371,21 @@
                         "class": "nk-tb-col ",
                         data: 'grade',
                         name: 'grade'
+                    },
+                    {
+                        "class": "nk-tb-col ",
+                        data: 'last_login',
+                        name: 'last_login'
+                    },
+                    {
+                        "class": "nk-tb-col ",
+                        data: 'last_login_ip',
+                        name: 'last_login_ip'
+                    },
+                    {
+                        "class": "nk-tb-col ",
+                        data: 'total_logins',
+                        name: 'total_logins'
                     },
                     {
                         "class": "nk-tb-col  text-center",

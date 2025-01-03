@@ -576,8 +576,8 @@ $currentOrganization = \Session::get('currentOrganization');
             }
 
             // Initialize the fields' state based on the checkbox
-            toggleBackgroundFields($('#background').is(':checked'));
-            // toggleBackgroundFields(true);
+            // toggleBackgroundFields($('#background').is(':checked'));
+            toggleBackgroundFields(true);
 
             $('#background').change(function () {
                 toggleBackgroundFields(this.checked);
