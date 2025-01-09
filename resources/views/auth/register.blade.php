@@ -216,6 +216,9 @@
                                                         <div class="form-control-wrap">
                                                             <select id="state" name="state" data-placeholder="Select State" data-search='on' class="form-select form-control @error('state') is-invalid @enderror" required>
                                                                 <option value="" selected disabled> Select State </option>
+                                                                @foreach($states as $id => $state)
+                                                                    <option value="{{ $state->id }}">{{ $state->name }}</option>
+                                                                @endforeach
                                                             </select>
                                                         </div>
                                                     </div>
@@ -301,7 +304,7 @@
             $('form').parsley();
             grecaptcha.reset();
 
-            getStates(209); //to set the states of united states by default
+            // getStates(209); //to set the states of united states by default
         });
 
         function validateEmail() {

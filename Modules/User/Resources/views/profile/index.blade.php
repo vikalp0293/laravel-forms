@@ -75,7 +75,7 @@
 
                                                     <input type="hidden" value="{{ $user->email }}" id="existingEmail">
 
-                                                    <button id="verifyBtn" onclick="verifyEmail()" style="display: none;" style="margin-top: 8px;" href="javascript:void(0);" class="btn btn-secondary">Verify Email</button>
+                                                    <a href="#" id="verifyBtn" onclick="verifyEmail()" style="display: none;" style="margin-top: 8px;" href="javascript:void(0);" class="btn btn-secondary">Verify Email</a>
                                                     
                                                 </div>
                                             </div>

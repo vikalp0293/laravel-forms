@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Middleware\CheckSuperAdmin;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -11,8 +11,7 @@
 |
 */
 
-Route::prefix('user')->group(function() {
-
+Route::prefix('user')->middleware(CheckSuperAdmin::class)->group(function () {
     Route::get('/', 'UserController@index');
     Route::get('/new', 'UserController@newUsers');
     Route::get('/create', 'UserController@create');

@@ -232,12 +232,15 @@ class UserController extends Controller
     
     public function sendVerificationEmail($email)
     {
+
         $authUser = Auth::user();
 
         $authUser->temp_email = $email;
         $authUser->save();
 
-        $verify_link = url('/profile/verify-email/' . $authUser->id);
+        $verify_link = url('/profile/verify-email/' . $authUser->uuid);
+
+
 
         $mailBody = '<a href="' . $verify_link . '" target="_blank" rel="noopener" title="reset password" style="text-decoration: none; font-size: 16px; color: #fff; background: #FF8000; border-radius: 5px;display: block;text-align: center;padding: 15px 5px; float:left; width: 25%;" margin-top:10px;> Verify Account </a>';
         $to_name = $email;
@@ -249,12 +252,14 @@ class UserController extends Controller
             $message->to($to_email, $to_name)
                 ->subject($mailSubject)
                 ->from(env('MAIL_FROM'), 'Laravel Forms');
-        });        
+        });
+
+        return true;
     }
 
     public function verifyEmail($user_id){
 
-        $user = User::where('id',$user_id)->first();
+        $user = User::where('uuid',$user_id)->first();
         if($user){
 
             $user->verified_at = date('Y-m-d H:i:s');

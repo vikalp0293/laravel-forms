@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Middleware\CheckSuperAdmin;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -10,8 +10,7 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::group(['middleware' => [],'prefix' => 'masters'], function () {
+Route::prefix('masters')->middleware(CheckSuperAdmin::class)->group(function () {
     Route::group(['prefix' => 'subject'], function () {
         Route::get('/', 'SubjectController@index');
         Route::post('/add', 'SubjectController@store');

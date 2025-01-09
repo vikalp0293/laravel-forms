@@ -58,12 +58,14 @@ class RegisterController extends Controller
         $subjects = Subject::where('status','active')->orderBy('name','asc')->get();
         $grades = Grade::where('status','active')->orderBy('name','asc')->get();
         $countries = Country::where('status','active')->orderBy('name','asc')->get();
+        $states = State::where('country_id',209)->where('status','active')->orderBy('name','asc')->get();
 
         // Pass data to the view
         return view('auth.register', [
             'subjects' => $subjects,
             'grades' => $grades,
-            'countries' => $countries
+            'countries' => $countries,
+            'states' => $states,
         ]);
     }
 

@@ -29,6 +29,18 @@ use Modules\Masters\Entities\Subtopic;
 
 class ExamsController extends Controller
 {
+
+    public function __construct() {
+
+        /* Execute authentication filter before processing any request */
+        $this->middleware('auth');
+
+        if (\Auth::check()) {
+            return redirect('/');
+        }
+
+    }
+    
     public function index(Request $request)
     {
         $userPermission = \Session::get('userPermission');

@@ -240,7 +240,6 @@
     <script src="{{url('js/scripts.js?ver=1.9.0')}}"></script>
     {{-- <script src="{{url('js/chart-ecommerce.js')}}"></script> --}}
     <script src="{{url('js/parsley.min.js')}}"></script>
-    <script src="{{url('js/top-notifications.js')}}"></script>
     @stack('footerScripts')
     <script src="{{url('js/common.js?t='.time())}}"></script>
     <script src="{{url('js/jquery.simplePagination.js')}}"></script>

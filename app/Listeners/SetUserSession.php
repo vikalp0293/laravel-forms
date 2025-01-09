@@ -17,13 +17,13 @@ class SetUserSession
             $roleName = $role[0];
         }
 
-        $roleDetail = Role::select('id')->where('organization_id', $event->user->organization_id)->where('name', $roleName)->first();
+        $roleDetail = Role::select('id')->where('name', $roleName)->first();
 
         if ($roleDetail) {
             $role_id = $roleDetail->id;
         }
 
-        $roleDetail = Role::select('id')->where('organization_id', $event->user->organization_id)->where('name', $roleName)->first();
+        $roleDetail = Role::select('id')->where('name', $roleName)->first();
 
         if ($roleDetail) {
             $role_id = $roleDetail->id;
