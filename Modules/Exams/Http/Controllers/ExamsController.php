@@ -211,6 +211,34 @@ class ExamsController extends Controller
         }
     }
 
+    public function store(Request $request){
+        echo "<pre>";
+        print_r($request->all());
+        die;
+    }
+
+    public function add(Request $request)
+    {
+        try {
+            $authUser = \Auth::user();
+            
+
+            $subjects = Subject::where('status','active')->orderBy('name','asc')->get();
+            $grades = Grade::where('status','active')->orderBy('name','asc')->get();
+            $states = State::where('status','active')->orderBy('name','asc')->get();
+            
+
+            return view('exams::bkcreate',[
+                'subjects' => $subjects,
+                'grades' => $grades,
+                'states' => $states,
+            ]);
+
+        } catch (Exception $e) {
+            return redirect('user')->with('error', $exception->getMessage());           
+        }
+    }
+
     public function getTopicBySubject($subject_id)
     {
         $topics   =   Topic::where('subject_id',$subject_id)->orderBy('name','asc')->get();  
