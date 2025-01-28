@@ -184,287 +184,289 @@ $userPermission = \Session::get('userPermission');
                     
                     <div class="col-md-12">
                         <div class="sp-plan-info card-inner">
-
-
-                            <div class="sections">
-                                <div class="sections-1" style="border: 1px solid; padding: 10px;">
-                                    <div class="row g-3 align-center">
-                                        <div class="col-lg-3">
-                                            <label class="form-label" for="Background">Background</label>
-                                        </div>
-                                        <div class="col-lg-9">
-                                            <div class="custom-control custom-control-md custom-switch">
-                                                <input type="checkbox" data-backgroundsection="1" name="background" id="background_1" class="custom-control-input background" value="1" data-parsley-multiple="background">
-                                                <label class="custom-control-label" for="background_1"> </label>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="background_section_1" style="display:none;">
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-3">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="instructions">Instructions</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-9">
-                                                <textarea data-parsley-errors-container=".parsley-container-instructions" id="instructions"  name="instructions" class="form-control background-image-input-1" autocomplete="off"></textarea>
-                                            </div>
-                                        </div>
-
-
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-3">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="instructions_2">Instructions 2</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-9">
-                                                <textarea  data-parsley-errors-container=".parsley-container-instructions_2" id="instructions_2" name="instructions_2" class="form-control background-image-input-1" autocomplete="off"></textarea>
-                                            </div>
-                                        </div>
-
-                                        <div class="row g-3 align-center ">
-                                            <div class="col-lg-3">
-                                                <x-inputs.verticalFormLabel label="Upload Image 1" for="default-06"/>
-                                            </div>
-                                            <div class="col-lg-9">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        <div class="custom-file">
-                                                            <input type="file" class="custom-file-input background-image-input-1" id="image_upload_1" name="image_upload_1">
-                                                            <label class="custom-file-label" for="image_upload_1">Choose file</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-3">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="instructions_3">Instructions 3</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-9">
-                                                <textarea  data-parsley-errors-container=".parsley-container-instructions_3" id="instructions_3" name="instructions_3" class="form-control background-image-input-1" autocomplete="off"></textarea>
-                                            </div>
-                                        </div>
-
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-3">
-                                                <x-inputs.verticalFormLabel label="Upload Image 2" for="default-06"/>
-                                            </div>
-                                            <div class="col-lg-9">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        <div class="custom-file">
-                                                            <input type="file" class="custom-file-input background-image-input-1" id="image_upload_2" name="image_upload_2">
-                                                            <label class="custom-file-label" for="image_upload_2">Choose file</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>  
-                                    </div>
-
-                                    <div class="question-block">
-
-                                        <div class="question-box question-wrapper-1">
-
-                                            <div class="row g-3 align-center">
-                                                <div class="col-lg-3">
-                                                    <div class="form-group">
-                                                        <label class="form-label" for="question">Question<span class="text-danger">*</span></label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-9">
-                                                    <textarea required data-parsley-errors-container=".parsley-container-question" id="question" name="questions[1][question]" class="form-control" autocomplete="off"></textarea>
-                                                </div>
-                                            </div>
-
-                                            <div class="row g-3 align-center">
-                                                <div class="col-lg-3">
-                                                    <label class="form-label" for="default-06">Question Image 1</label>
-                                                </div>
-                                                <div class="col-lg-9">
-                                                    <div class="form-group">
-                                                        <div class="form-control-wrap">
-                                                            <div class="custom-file">
-                                                                <input type="file" class="custom-file-input" id="question_image_1" name="questions[1][question_image_1]">
-                                                                <label class="custom-file-label" for="question_image_1">Choose file</label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="row g-3 align-center">
-                                                <div class="col-lg-3">
-                                                    <div class="form-group">
-                                                        <label class="form-label" for="question_text_2">Question Text 2</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-9">
-                                                    <textarea  data-parsley-errors-container=".parsley-container-question_text_2" id="question_text_2" name="questions[1][question_text_2]" class="form-control" autocomplete="off"></textarea>
-                                                </div>
-                                            </div>
-
-                                            <div class="row g-3 align-center">
-                                                <div class="col-lg-3">
-                                                    <label class="form-label" for="default-06">Question Image 2</label>
-                                                </div>
-                                                <div class="col-lg-9">
-                                                    <div class="form-group">
-                                                        <div class="form-control-wrap">
-                                                            <div class="custom-file">
-                                                                <input type="file" class="custom-file-input" id="question_image_2" name="questions[1][question_image_2]">
-                                                                <label class="custom-file-label" for="question_image_2">Choose file</label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="row g-3 align-center">
-                                                <div class="col-lg-3">
-                                                    <x-inputs.verticalFormLabel label="Question Type" for="default-06"/>
-                                                </div>
-                                                <div class="col-lg-9">
-                                                    <div class="form-group">
-                                                        <div class="form-control-wrap">
-
-                                                            <div class="custom-control custom-control-xs custom-radio">
-                                                                <input type="radio" name="questions[1][question_type]" data-question="1" id="question_type_mc_1" class="custom-control-input radio-btn question-choice" value="mc">
-                                                                <label class="custom-control-label"  for="question_type_mc_1">Make it MC</label>
-                                                            </div>
-
-                                                            <div class="custom-control custom-control-xs custom-radio">
-                                                                <input type="radio" name="questions[1][question_type]" data-question="1" id="question_type_sa_1" class="custom-control-input radio-btn question-choice" value="sa">
-                                                                <label class="custom-control-label"  for="question_type_sa_1">Make it Short answer</label>
-                                                            </div>
-
-                                                            <div class="custom-control custom-control-xs custom-radio">
-                                                                <input type="radio" name="questions[1][question_type]" data-question="1" id="question_type_admin_1" class="custom-control-input radio-btn question-choice" value="admin">
-                                                                <label class="custom-control-label"  for="question_type_admin_1">Admin Only</label>
-                                                            </div>
-
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <br>
-                                            <div class="mc_section_1" style="display: none;">
-                                                <div class="row g-3 align-center">
-                                                    <div class="col-lg-3">
-                                                        <x-inputs.verticalFormLabel label="MC Options" for="default-112"/>
-                                                    </div>
-                                                    <div class="col-lg-9">
-                                                        <table>
-                                                            <tr>
-                                                                <td>
-                                                                    Correct Answer
-                                                                </td>
-                                                                <td></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td></td>
-                                                                <td style="width:80%">
-                                                                    <div class="custom-radio">
-                                                                        <input type="radio" name="questions[1][correct_option]" id="option_radio_1" class="custom-control-input radio-btn mc_options_1" value="1">
-                                                                        <label class="custom-control-label col-lg-9"  for="option_radio_1">
-                                                                            <input type="text" name="questions[1][option1]" placeholder="Option 1" class="form-control mc_options_1">
-                                                                        </label>
-                                                                    </div>
-                                                                    <br><br>
-                                                                    <div class="custom-radio">
-                                                                        <input type="radio" name="questions[1][correct_option]" id="option_radio_2" class="custom-control-input radio-btn mc_options_1" value="2">
-                                                                        <label class="custom-control-label col-lg-9"  for="option_radio_2">
-                                                                            <input type="text" name="questions[1][option2]" placeholder="Option 2" class="form-control mc_options_1">
-                                                                        </label>
-                                                                    </div>
-                                                                    <br><br>
-                                                                    <div class="custom-radio">
-                                                                        <input type="radio" name="questions[1][correct_option]" id="option_radio_3" class="custom-control-input radio-btn mc_options_1" value="3">
-                                                                        <label class="custom-control-label col-lg-9"  for="option_radio_3">
-                                                                            <input type="text" name="questions[1][option3]" placeholder="Option 3" class="form-control mc_options_1">
-                                                                        </label>
-                                                                    </div>
-                                                                    <br><br>
-                                                                    <div class="custom-radio">
-                                                                        <input type="radio" name="questions[1][correct_option]" id="option_radio_4" class="custom-control-input radio-btn mc_options_1" value="4">
-                                                                        <label class="custom-control-label col-lg-9"  for="option_radio_4">
-                                                                            <input type="text" name="questions[1][option4]" placeholder="Option 4" class="form-control mc_options_1">
-                                                                        </label>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                        </table>
-                                                    </div>
-                                                </div>
-
-                                                <div class="row g-3 align-center">
-                                                    <div class="col-lg-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label" for="mc_explanation_text">Explanation Text</label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-9">
-                                                        <textarea  data-parsley-errors-container=".parsley-container-mc_explanation_text" id="mc_explanation_text"  name="questions[1][mc_explanation_text]" class="form-control" autocomplete="off"></textarea>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                            <div class="sa_section_1" style="display: none;">
-                                                <div class="row g-3 align-center">
-                                                    <div class="col-lg-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label" for="sa_answer_1">Short Answer 1<span class="text-danger">*</span></label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-9">
-                                                        <textarea  data-parsley-errors-container=".parsley-container-sa_answer_1" id="sa_answer_1" name="questions[1][sa_answer_1]" class="form-control" autocomplete="off"></textarea>
-                                                    </div>
-                                                </div>
-
-                                                <div class="row g-3 align-center">
-                                                    <div class="col-lg-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label" for="sa_answer_1">Short Answer 2<span class="text-danger">*</span></label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-9">
-                                                        <textarea  data-parsley-errors-container=".parsley-container-sa_answer_2" id="sa_answer_2" name="questions[1][sa_answer_2]" class="form-control" autocomplete="off"></textarea>
-
-                                                        
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="row g-3 align-center">
-                                                    <div class="col-lg-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label" for="sa_explanation_text">Explanation Text<span class="text-danger">*</span></label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-9">
-                                                        <textarea  data-parsley-errors-container=".parsley-container-sa_explanation_text" id="sa_explanation_text" name="questions[1][sa_explanation_text]" class="form-control" autocomplete="off"></textarea>
-                                                    </div>
-                                                </div>                                            
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="text-right">
-                                        <a style="display:none !important;" href="javascript:void(0);" data-background="1" class="btn btn-secondary d-none d-md-inline-flex addQuestionBtn_1"><em class="icon ni ni-plus"></em><span>Add Another Question Using Same Background</span></a>
-                                    </div>
-
+                            
+                            <div class="row g-3 align-center">
+                                <div class="col-lg-3">
+                                    <label class="form-label" for="Background">Background</label>
                                 </div>
-                                
+                                <div class="col-lg-9">
+                                    <div class="custom-control custom-control-md custom-switch">
+                                        <input type="checkbox" data-backgroundsection="1" name="background" id="background_1" class="custom-control-input background" value="1" data-parsley-multiple="background">
+                                        <label class="custom-control-label" for="background_1"> </label>
+                                    </div>
+                                </div>
                             </div>
+
+                            <div class="background_section_1" style="display:none;">
+                                <div class="row g-3 align-center">
+                                    <div class="col-lg-3">
+                                        <div class="form-group">
+                                            <label class="form-label" for="instructions">Instructions</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-9">
+                                        <textarea data-parsley-errors-container=".parsley-container-instructions" id="instructions"  name="instructions" class="form-control background-image-input-1" autocomplete="off"></textarea>
+                                    </div>
+                                </div>
+
+
+                                <div class="row g-3 align-center">
+                                    <div class="col-lg-3">
+                                        <div class="form-group">
+                                            <label class="form-label" for="instructions_2">Instructions 2</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-9">
+                                        <textarea  data-parsley-errors-container=".parsley-container-instructions_2" id="instructions_2" name="instructions_2" class="form-control background-image-input-1" autocomplete="off"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3 align-center ">
+                                    <div class="col-lg-3">
+                                        <x-inputs.verticalFormLabel label="Upload Image 1" for="default-06"/>
+                                    </div>
+                                    <div class="col-lg-9">
+                                        <div class="form-group">
+                                            <div class="form-control-wrap">
+                                                <div class="custom-file">
+                                                    <input type="file" class="custom-file-input background-image-input-1" id="image_upload_1" name="image_upload_1">
+                                                    <label class="custom-file-label" for="image_upload_1">Choose file</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3 align-center">
+                                    <div class="col-lg-3">
+                                        <div class="form-group">
+                                            <label class="form-label" for="instructions_3">Instructions 3</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-9">
+                                        <textarea  data-parsley-errors-container=".parsley-container-instructions_3" id="instructions_3" name="instructions_3" class="form-control background-image-input-1" autocomplete="off"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3 align-center">
+                                    <div class="col-lg-3">
+                                        <x-inputs.verticalFormLabel label="Upload Image 2" for="default-06"/>
+                                    </div>
+                                    <div class="col-lg-9">
+                                        <div class="form-group">
+                                            <div class="form-control-wrap">
+                                                <div class="custom-file">
+                                                    <input type="file" class="custom-file-input background-image-input-1" id="image_upload_2" name="image_upload_2">
+                                                    <label class="custom-file-label" for="image_upload_2">Choose file</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>  
+                            </div>
+                            
                             <br>
-                            <div class="text-right">
-                                <a href="javascript:void(0);" data-background="new-background" class="btn btn-info d-none d-md-inline-flex btn-nobackground add_button"><em class="icon ni ni-plus"></em><span>Add Another Question Not Using Same Background</span></a>
+                            <div class="nk-block">
+
+                                <div class="question-block">
+
+                                    <div class="question-box question-wrapper-1">
+                                    
+                                        <input type="text" class="question_background_1" value="0" name="questions[1][question_background]">
+
+                                        <div class="row g-3 align-center">
+                                            <div class="col-lg-3">
+                                                <div class="form-group">
+                                                    <label class="form-label" for="question">Question<span class="text-danger">*</span></label>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-9">
+                                                <textarea required data-parsley-errors-container=".parsley-container-question" id="question" name="questions[1][question]" class="form-control" autocomplete="off"></textarea>
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 align-center">
+                                            <div class="col-lg-3">
+                                                <label class="form-label" for="default-06">Question Image 1</label>
+                                            </div>
+                                            <div class="col-lg-9">
+                                                <div class="form-group">
+                                                    <div class="form-control-wrap">
+                                                        <div class="custom-file">
+                                                            <input type="file" class="custom-file-input" id="question_image_1" name="questions[1][question_image_1]">
+                                                            <label class="custom-file-label" for="question_image_1">Choose file</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 align-center">
+                                            <div class="col-lg-3">
+                                                <div class="form-group">
+                                                    <label class="form-label" for="question_text_2">Question Text 2</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-9">
+                                                <textarea  data-parsley-errors-container=".parsley-container-question_text_2" id="question_text_2" name="questions[1][question_text_2]" class="form-control" autocomplete="off"></textarea>
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 align-center">
+                                            <div class="col-lg-3">
+                                                <label class="form-label" for="default-06">Question Image 2</label>
+                                            </div>
+                                            <div class="col-lg-9">
+                                                <div class="form-group">
+                                                    <div class="form-control-wrap">
+                                                        <div class="custom-file">
+                                                            <input type="file" class="custom-file-input" id="question_image_2" name="questions[1][question_image_2]">
+                                                            <label class="custom-file-label" for="question_image_2">Choose file</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 align-center">
+                                            <div class="col-lg-3">
+                                                <x-inputs.verticalFormLabel label="Question Type" for="default-06"/>
+                                            </div>
+                                            <div class="col-lg-9">
+                                                <div class="form-group">
+                                                    <div class="form-control-wrap">
+
+                                                        <div class="custom-control custom-control-xs custom-radio">
+                                                            <input type="radio" name="questions[1][question_type]" data-question="1" id="question_type_mc_1" class="custom-control-input radio-btn question-choice" value="mc">
+                                                            <label class="custom-control-label"  for="question_type_mc_1">Make it MC</label>
+                                                        </div>
+
+                                                        <div class="custom-control custom-control-xs custom-radio">
+                                                            <input type="radio" name="questions[1][question_type]" data-question="1" id="question_type_sa_1" class="custom-control-input radio-btn question-choice" value="sa">
+                                                            <label class="custom-control-label"  for="question_type_sa_1">Make it Short answer</label>
+                                                        </div>
+
+                                                        <div class="custom-control custom-control-xs custom-radio">
+                                                            <input type="radio" name="questions[1][question_type]" data-question="1" id="question_type_admin_1" class="custom-control-input radio-btn question-choice" value="admin">
+                                                            <label class="custom-control-label"  for="question_type_admin_1">Admin Only</label>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="mc_section_1" style="display: none;">
+                                            <div class="row g-3 align-center">
+                                                <div class="col-lg-3">
+                                                    <x-inputs.verticalFormLabel label="MC Options" for="default-112"/>
+                                                </div>
+                                                <div class="col-lg-9">
+                                                    <table>
+                                                        <tr>
+                                                            <td>
+                                                                Correct Answer
+                                                            </td>
+                                                            <td></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td></td>
+                                                            <td style="width:80%">
+                                                                <div class="custom-radio">
+                                                                    <input type="radio" name="questions[1][correct_option]" id="option_radio_1" class="custom-control-input radio-btn mc_options_1" value="1">
+                                                                    <label class="custom-control-label col-lg-9"  for="option_radio_1">
+                                                                        <input type="text" name="questions[1][option1]" placeholder="Option 1" class="form-control mc_options_1">
+                                                                    </label>
+                                                                </div>
+                                                                <br><br>
+                                                                <div class="custom-radio">
+                                                                    <input type="radio" name="questions[1][correct_option]" id="option_radio_2" class="custom-control-input radio-btn mc_options_1" value="2">
+                                                                    <label class="custom-control-label col-lg-9"  for="option_radio_2">
+                                                                        <input type="text" name="questions[1][option2]" placeholder="Option 2" class="form-control mc_options_1">
+                                                                    </label>
+                                                                </div>
+                                                                <br><br>
+                                                                <div class="custom-radio">
+                                                                    <input type="radio" name="questions[1][correct_option]" id="option_radio_3" class="custom-control-input radio-btn mc_options_1" value="3">
+                                                                    <label class="custom-control-label col-lg-9"  for="option_radio_3">
+                                                                        <input type="text" name="questions[1][option3]" placeholder="Option 3" class="form-control mc_options_1">
+                                                                    </label>
+                                                                </div>
+                                                                <br><br>
+                                                                <div class="custom-radio">
+                                                                    <input type="radio" name="questions[1][correct_option]" id="option_radio_4" class="custom-control-input radio-btn mc_options_1" value="4">
+                                                                    <label class="custom-control-label col-lg-9"  for="option_radio_4">
+                                                                        <input type="text" name="questions[1][option4]" placeholder="Option 4" class="form-control mc_options_1">
+                                                                    </label>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+
+                                            <div class="row g-3 align-center">
+                                                <div class="col-lg-3">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="mc_explanation_text">Explanation Text</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-9">
+                                                    <textarea  data-parsley-errors-container=".parsley-container-mc_explanation_text" id="mc_explanation_text"  name="questions[1][mc_explanation_text]" class="form-control" autocomplete="off"></textarea>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="sa_section_1" style="display: none;">
+                                            <div class="row g-3 align-center">
+                                                <div class="col-lg-3">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="sa_answer_1">Short Answer 1<span class="text-danger">*</span></label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-9">
+                                                    <textarea  data-parsley-errors-container=".parsley-container-sa_answer_1" id="sa_answer_1" name="questions[1][sa_answer_1]" class="form-control" autocomplete="off"></textarea>
+                                                </div>
+                                            </div>
+
+                                            <div class="row g-3 align-center">
+                                                <div class="col-lg-3">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="sa_answer_1">Short Answer 2<span class="text-danger">*</span></label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-9">
+                                                    <textarea  data-parsley-errors-container=".parsley-container-sa_answer_2" id="sa_answer_2" name="questions[1][sa_answer_2]" class="form-control" autocomplete="off"></textarea>
+
+                                                    
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="row g-3 align-center">
+                                                <div class="col-lg-3">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="sa_explanation_text">Explanation Text<span class="text-danger">*</span></label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-9">
+                                                    <textarea  data-parsley-errors-container=".parsley-container-sa_explanation_text" id="sa_explanation_text" name="questions[1][sa_explanation_text]" class="form-control" autocomplete="off"></textarea>
+                                                </div>
+                                            </div>                                            
+                                        </div>
+                                    </div>
+                                    <hr>
+                                </div>
+
+                                <div class="row g-3 align-center">
+                                    <div class="col-lg-3">
+                                        <!-- <x-inputs.verticalFormLabel label="Background" for="Background" /> -->
+                                    </div>
+                                    <div class="col-lg-9">
+                                        <a style="display:none !important;" href="javascript:void(0);" data-background="same-background" data-backgroundvalue="0" class="btn btn-secondary d-none d-md-inline-flex button_background add_button"><em class="icon ni ni-plus"></em><span>Add Another Question Using Same Background</span></a>
+                                        <a href="javascript:void(0);" data-background="new-background" class="btn btn-info d-none d-md-inline-flex btn-nobackground add_button"><em class="icon ni ni-plus"></em><span>Add Another Question Not Using Same Background</span></a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

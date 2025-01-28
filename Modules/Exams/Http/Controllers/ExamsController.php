@@ -211,6 +211,28 @@ class ExamsController extends Controller
         }
     }
 
+    public function createOld(Request $request)
+    {
+        try {
+            $authUser = \Auth::user();
+            
+
+            $subjects = Subject::where('status','active')->orderBy('name','asc')->get();
+            $grades = Grade::where('status','active')->orderBy('name','asc')->get();
+            $states = State::where('status','active')->orderBy('name','asc')->get();
+            
+
+            return view('exams::form-bk',[
+                'subjects' => $subjects,
+                'grades' => $grades,
+                'states' => $states,
+            ]);
+
+        } catch (Exception $e) {
+            return redirect('user')->with('error', $exception->getMessage());           
+        }
+    }
+
     public function store(Request $request){
         echo "<pre>";
         print_r($request->all());

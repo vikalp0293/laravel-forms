@@ -18,6 +18,7 @@ Route::group(['middleware' => [],'prefix' => 'exams'], function () {
     Route::get('/', 'ExamsController@index');
     Route::get('/new', 'ExamsController@newUsers');
     Route::get('/create', 'ExamsController@create');
+    Route::get('/create-old', 'ExamsController@createOld');
     Route::get('/add', 'ExamsController@add');
     Route::post('/create', 'ExamsController@store');
 

@@ -47,10 +47,27 @@ function toggleBackgroundFields(isEnabled,backgroundSectionNo,backgroundValue) {
 
     if(isEnabled === true){
         $('.background_section_'+backgroundSectionNo).show();
-        $('.addQuestionBtn_'+backgroundSectionNo).show();
+        $('.question_background_'+backgroundSectionNo).val(backgroundValue);
+        $('.button_background').show();
+        $('.question_background').val(1);
+
+        var lastCheckbox = $('.background').last();
+
+        // Check if the last checkbox is checked
+        if (lastCheckbox.is(':checked')) {
+            var lastCheckboxValue = lastCheckbox.val();
+        }else{
+            var lastCheckboxValue = 0;
+        }
+
+        $('.button_background').data('backgroundvalue', lastCheckboxValue);
+
     }else{
         $('.background_section_'+backgroundSectionNo).hide();
-        $('.addQuestionBtn_'+backgroundSectionNo).attr('style', 'display: none !important;');
+        $('.question_background_'+backgroundSectionNo).val(0);
+        $('.button_background').attr('style', 'display: none !important;');
+        $('.question_background').val(0);
+        $('.button_background').data('backgroundvalue', 0);
     }
 
     $('.background-image-input-'+backgroundSectionNo).each(function () {
