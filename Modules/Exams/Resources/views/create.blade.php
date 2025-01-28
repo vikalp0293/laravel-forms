@@ -12,7 +12,7 @@ $userPermission = \Session::get('userPermission');
     </div><!-- .nk-block-head -->
     <form role="form" method="post" enctype="multipart/form-data" >
         @csrf
-        <input type="" name="maxQuestions" id="maxQuestions" value="{{ $maxQuestions }}">
+        <input type="hidden" name="maxQuestions" id="maxQuestions" value="{{ $maxQuestions }}">
         <div class="nk-block">
             <div class="card card-bordered sp-plan">
                 <div class="row no-gutters">
@@ -194,7 +194,7 @@ $userPermission = \Session::get('userPermission');
                                         </div>
                                         <div class="col-lg-9">
                                             <div class="custom-control custom-control-md custom-switch">
-                                                <input type="checkbox" data-backgroundsection="1" name="background[1][background]" id="background_1" class="custom-control-input background" value="1" data-parsley-multiple="background">
+                                                <input type="checkbox" data-backgroundsection="1" name="backgrounds[1][background]" id="background_1" class="custom-control-input background" value="1" data-parsley-multiple="background">
                                                 <label class="custom-control-label" for="background_1"> </label>
                                             </div>
                                         </div>
@@ -208,7 +208,7 @@ $userPermission = \Session::get('userPermission');
                                                 </div>
                                             </div>
                                             <div class="col-lg-9">
-                                                <textarea data-parsley-errors-container=".parsley-container-instructions" id="instructions"  name="background[1][instructions]" class="form-control background-image-input-1" autocomplete="off"></textarea>
+                                                <textarea data-parsley-errors-container=".parsley-container-instructions" id="instructions"  name="backgrounds[1][instructions]" class="form-control background-image-input-1" autocomplete="off"></textarea>
                                             </div>
                                         </div>
 
@@ -220,7 +220,7 @@ $userPermission = \Session::get('userPermission');
                                                 </div>
                                             </div>
                                             <div class="col-lg-9">
-                                                <textarea  data-parsley-errors-container=".parsley-container-instructions_2" id="instructions_2" name="background[1][instructions_2]" class="form-control background-image-input-1" autocomplete="off"></textarea>
+                                                <textarea  data-parsley-errors-container=".parsley-container-instructions_2" id="instructions_2" name="backgrounds[1][instructions_2]" class="form-control background-image-input-1" autocomplete="off"></textarea>
                                             </div>
                                         </div>
 
@@ -232,7 +232,7 @@ $userPermission = \Session::get('userPermission');
                                                 <div class="form-group">
                                                     <div class="form-control-wrap">
                                                         <div class="custom-file">
-                                                            <input type="file" class="custom-file-input background-image-input-1" id="image_upload_1" name="background[1][image_upload_1]">
+                                                            <input type="file" class="custom-file-input background-image-input-1" id="image_upload_1" name="backgrounds[1][image_upload_1]">
                                                             <label class="custom-file-label" for="image_upload_1">Choose file</label>
                                                             <span class="error-message" style="color: red; display: none;">Invalid file type or size exceeds 2MB</span>
                                                         </div>
@@ -248,7 +248,7 @@ $userPermission = \Session::get('userPermission');
                                                 </div>
                                             </div>
                                             <div class="col-lg-9">
-                                                <textarea  data-parsley-errors-container=".parsley-container-instructions_3" id="instructions_3" name="background[1][instructions_3]" class="form-control background-image-input-1" autocomplete="off"></textarea>
+                                                <textarea  data-parsley-errors-container=".parsley-container-instructions_3" id="instructions_3" name="backgrounds[1][instructions_3]" class="form-control background-image-input-1" autocomplete="off"></textarea>
                                             </div>
                                         </div>
 
@@ -260,7 +260,7 @@ $userPermission = \Session::get('userPermission');
                                                 <div class="form-group">
                                                     <div class="form-control-wrap">
                                                         <div class="custom-file">
-                                                            <input type="file" class="custom-file-input background-image-input-1" id="image_upload_2" name="background[1][image_upload_2]">
+                                                            <input type="file" class="custom-file-input background-image-input-1" id="image_upload_2" name="backgrounds[1][image_upload_2]">
                                                             <label class="custom-file-label" for="image_upload_2">Choose file</label>
                                                             <span class="error-message" style="color: red; display: none;">Invalid file type or size exceeds 2MB</span>
                                                         </div>

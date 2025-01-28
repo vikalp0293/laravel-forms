@@ -83,7 +83,7 @@ function backgroundFields(newSectionCount, newQuestionCount){
                 </div>\
                 <div class="col-lg-9">\
                     <div class="custom-control custom-control-md custom-switch">\
-                        <input type="checkbox" data-backgroundsection="'+newSectionCount+'" name="background['+newSectionCount+'][background]" id="background_'+newSectionCount+'" class="custom-control-input background" value="'+newSectionCount+'" data-parsley-multiple="background">\
+                        <input type="checkbox" data-backgroundsection="'+newSectionCount+'" name="backgrounds['+newSectionCount+'][background]" id="background_'+newSectionCount+'" class="custom-control-input background" value="'+newSectionCount+'" data-parsley-multiple="background">\
                         <label class="custom-control-label" for="background_'+newSectionCount+'"> </label>\
                     </div>\
                 </div>\
@@ -96,7 +96,7 @@ function backgroundFields(newSectionCount, newQuestionCount){
                         </div>\
                     </div>\
                     <div class="col-lg-9">\
-                        <textarea data-parsley-errors-container=".parsley-container-instructions" id="instructions"  name="background['+newSectionCount+'][instructions]" class="form-control background-image-input-'+newSectionCount+'" autocomplete="off"></textarea>\
+                        <textarea data-parsley-errors-container=".parsley-container-instructions" id="instructions"  name="backgrounds['+newSectionCount+'][instructions]" class="form-control background-image-input-'+newSectionCount+'" autocomplete="off"></textarea>\
                     </div>\
                 </div>\
                 <div class="row g-3 align-center">\
@@ -106,7 +106,7 @@ function backgroundFields(newSectionCount, newQuestionCount){
                         </div>\
                     </div>\
                     <div class="col-lg-9">\
-                        <textarea  data-parsley-errors-container=".parsley-container-instructions_2" id="instructions_2" name="background['+newSectionCount+'][instructions_2]" class="form-control background-image-input-'+newSectionCount+'" autocomplete="off"></textarea>\
+                        <textarea  data-parsley-errors-container=".parsley-container-instructions_2" id="instructions_2" name="backgrounds['+newSectionCount+'][instructions_2]" class="form-control background-image-input-'+newSectionCount+'" autocomplete="off"></textarea>\
                     </div>\
                 </div>\
                 <div class="row g-3 align-center ">\
@@ -117,7 +117,7 @@ function backgroundFields(newSectionCount, newQuestionCount){
                         <div class="form-group">\
                             <div class="form-control-wrap">\
                                 <div class="custom-file">\
-                                    <input type="file" class="custom-file-input background-image-input-'+newSectionCount+'" id="image_upload_1" name="background['+newSectionCount+'][image_upload_1]">\
+                                    <input type="file" class="custom-file-input background-image-input-'+newSectionCount+'" id="image_upload_1" name="backgrounds['+newSectionCount+'][image_upload_1]">\
                                     <label class="custom-file-label" for="image_upload_1">Choose file</label>\
                                     <span class="error-message" style="color: red; display: none;">Invalid file type or size exceeds 2MB</span>\
                                 </div>\
@@ -132,7 +132,7 @@ function backgroundFields(newSectionCount, newQuestionCount){
                         </div>\
                     </div>\
                     <div class="col-lg-9">\
-                        <textarea  data-parsley-errors-container=".parsley-container-instructions_3" id="instructions_3" name="background['+newSectionCount+'][instructions_3]" class="form-control background-image-input-'+newSectionCount+'" autocomplete="off"></textarea>\
+                        <textarea  data-parsley-errors-container=".parsley-container-instructions_3" id="instructions_3" name="backgrounds['+newSectionCount+'][instructions_3]" class="form-control background-image-input-'+newSectionCount+'" autocomplete="off"></textarea>\
                     </div>\
                 </div>\
                 <div class="row g-3 align-center">\
@@ -143,7 +143,7 @@ function backgroundFields(newSectionCount, newQuestionCount){
                         <div class="form-group">\
                             <div class="form-control-wrap">\
                                 <div class="custom-file">\
-                                    <input type="file" class="custom-file-input background-image-input-'+newSectionCount+'" id="image_upload_2" name="background['+newSectionCount+'][image_upload_2]">\
+                                    <input type="file" class="custom-file-input background-image-input-'+newSectionCount+'" id="image_upload_2" name="backgrounds['+newSectionCount+'][image_upload_2]">\
                                     <label class="custom-file-label" for="image_upload_2">Choose file</label>\
                                     <span class="error-message" style="color: red; display: none;">Invalid file type or size exceeds 2MB</span>\
                                 </div>\
