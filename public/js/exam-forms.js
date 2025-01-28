@@ -56,35 +56,39 @@ function toggleBackgroundFields(isEnabled,backgroundSectionNo,backgroundValue) {
     $('.background-image-input-'+backgroundSectionNo).each(function () {
         $(this).prop('disabled', !isEnabled); // Disable if checkbox is unchecked
     });
+
+    updateQuestionsBasedOnCheckbox();
 }
 
+function updateQuestionsBasedOnCheckbox() {
+    // Loop through each checkbox with class 'background'
+    $('.background').each(function () {
+        const sectionId = $(this).data('backgroundsection'); // Get the section number from data attribute
+        const isChecked = $(this).is(':checked'); // Check if the checkbox is checked
+        const value = isChecked ? $(this).val() : 0; // If checked, use its value; otherwise, use 0
 
-// Add more questions code goes here
-$(document).on('click', '.add_button', function(){ 
-    // Add more questions code goes here
-    var totalQuestions = $('.question-box').length;
-    var newQuestionCount = totalQuestions+1;
+        // Find all inputs with class 'question' inside the same section and update their value
+        $(`.sections-${sectionId} .question-box .question`).val(value);
+    });
+}
 
-    var backgroundType = $(this).data('background');
-    var backgroundValue = 0;
-    
-    if(backgroundType == 'same-background'){
-        var backgroundValue = $(this).data('backgroundvalue');
-        var background = '<p class="background_section_'+newQuestionCount+'">Using same background as above</p>';
-    }else{
-        var background = '\
-            <div class="row g-3 align-center background_section_'+newQuestionCount+'">\
+function backgroundFields(newSectionCount, newQuestionCount){
+    const randomColor = getRandomLightColor();
+    var background = '\
+        <br>\
+        <div class="section-box sections-'+newSectionCount+'" style="border: 1px solid; padding: 10px; background-color:'+randomColor+';">\
+            <div class="row g-3 align-center">\
                 <div class="col-lg-3">\
                     <label class="form-label" for="Background">Background</label>\
                 </div>\
                 <div class="col-lg-9">\
                     <div class="custom-control custom-control-md custom-switch">\
-                        <input type="checkbox" data-backgroundsection="'+newQuestionCount+'" name="background" id="background_'+newQuestionCount+'" class="custom-control-input background" value="'+newQuestionCount+'" data-parsley-multiple="background">\
-                        <label class="custom-control-label" for="background_'+newQuestionCount+'"> </label>\
+                        <input type="checkbox" data-backgroundsection="'+newSectionCount+'" name="background['+newSectionCount+'][background]" id="background_'+newSectionCount+'" class="custom-control-input background" value="'+newSectionCount+'" data-parsley-multiple="background">\
+                        <label class="custom-control-label" for="background_'+newSectionCount+'"> </label>\
                     </div>\
                 </div>\
             </div>\
-            <div class="background_section_'+newQuestionCount+'" style="display:none;">\
+            <div class="background_section_'+newSectionCount+'" style="display:none;">\
                 <div class="row g-3 align-center">\
                     <div class="col-lg-3">\
                         <div class="form-group">\
@@ -92,7 +96,7 @@ $(document).on('click', '.add_button', function(){
                         </div>\
                     </div>\
                     <div class="col-lg-9">\
-                        <textarea data-parsley-errors-container=".parsley-container-instructions" id="instructions"  name="instructions" class="form-control background-image-input-'+newQuestionCount+'" autocomplete="off"></textarea>\
+                        <textarea data-parsley-errors-container=".parsley-container-instructions" id="instructions"  name="background['+newSectionCount+'][instructions]" class="form-control background-image-input-'+newSectionCount+'" autocomplete="off"></textarea>\
                     </div>\
                 </div>\
                 <div class="row g-3 align-center">\
@@ -102,7 +106,7 @@ $(document).on('click', '.add_button', function(){
                         </div>\
                     </div>\
                     <div class="col-lg-9">\
-                        <textarea  data-parsley-errors-container=".parsley-container-instructions_2" id="instructions_2" name="instructions_2" class="form-control background-image-input-'+newQuestionCount+'" autocomplete="off"></textarea>\
+                        <textarea  data-parsley-errors-container=".parsley-container-instructions_2" id="instructions_2" name="background['+newSectionCount+'][instructions_2]" class="form-control background-image-input-'+newSectionCount+'" autocomplete="off"></textarea>\
                     </div>\
                 </div>\
                 <div class="row g-3 align-center ">\
@@ -113,8 +117,9 @@ $(document).on('click', '.add_button', function(){
                         <div class="form-group">\
                             <div class="form-control-wrap">\
                                 <div class="custom-file">\
-                                    <input type="file" class="custom-file-input background-image-input-'+newQuestionCount+'" id="image_upload_1" name="image_upload_1">\
+                                    <input type="file" class="custom-file-input background-image-input-'+newSectionCount+'" id="image_upload_1" name="background['+newSectionCount+'][image_upload_1]">\
                                     <label class="custom-file-label" for="image_upload_1">Choose file</label>\
+                                    <span class="error-message" style="color: red; display: none;">Invalid file type or size exceeds 2MB</span>\
                                 </div>\
                             </div>\
                         </div>\
@@ -127,7 +132,7 @@ $(document).on('click', '.add_button', function(){
                         </div>\
                     </div>\
                     <div class="col-lg-9">\
-                        <textarea  data-parsley-errors-container=".parsley-container-instructions_3" id="instructions_3" name="instructions_3" class="form-control background-image-input-'+newQuestionCount+'" autocomplete="off"></textarea>\
+                        <textarea  data-parsley-errors-container=".parsley-container-instructions_3" id="instructions_3" name="background['+newSectionCount+'][instructions_3]" class="form-control background-image-input-'+newSectionCount+'" autocomplete="off"></textarea>\
                     </div>\
                 </div>\
                 <div class="row g-3 align-center">\
@@ -138,23 +143,33 @@ $(document).on('click', '.add_button', function(){
                         <div class="form-group">\
                             <div class="form-control-wrap">\
                                 <div class="custom-file">\
-                                    <input type="file" class="custom-file-input background-image-input-'+newQuestionCount+'" id="image_upload_2" name="image_upload_2">\
+                                    <input type="file" class="custom-file-input background-image-input-'+newSectionCount+'" id="image_upload_2" name="background['+newSectionCount+'][image_upload_2]">\
                                     <label class="custom-file-label" for="image_upload_2">Choose file</label>\
+                                    <span class="error-message" style="color: red; display: none;">Invalid file type or size exceeds 2MB</span>\
                                 </div>\
                             </div>\
                         </div>\
                     </div>\
-                </div>  \
+                </div>\
+                <hr>\
             </div>\
-        ';
-    }
+            <div class="question-block-'+newSectionCount+'">\
+            '+questionFileds(newQuestionCount)+'\
+            </div>\
+            <div class="text-right">\
+                <a style="display:none !important;" href="javascript:void(0);" data-section="'+newSectionCount+'" class="btn btn-secondary d-none d-md-inline-flex addQuestionSameBackground addQuestionBtn_'+newSectionCount+'"><em class="icon ni ni-plus"></em><span>Add Another Question Using Same Background</span></a>\
+            </div>\
+        </div>\
+    ';
 
+    return background;
+}
 
-
+function questionFileds(newQuestionCount){
     var fieldHTML = '\
-        '+background+'\
         <div class="question-box question-wrapper-'+newQuestionCount+'">\
-            <input type="text" class="question_background_'+newQuestionCount+'" value="'+backgroundValue+'" name="questions['+newQuestionCount+'][question_background]">\
+            <hr>\
+            <input type="text" name="questions['+newQuestionCount+'][background]" class="question">\
             <div class="row g-3 align-center">\
                 <div class="col-lg-3">\
                     <div class="form-group">\
@@ -175,6 +190,7 @@ $(document).on('click', '.add_button', function(){
                             <div class="custom-file">\
                                 <input type="file" class="custom-file-input" id="question_image_1'+newQuestionCount+'" name="questions['+newQuestionCount+'][question_image_1]">\
                                 <label class="custom-file-label" for="question_image_1'+newQuestionCount+'">Choose file</label>\
+                                <span class="error-message" style="color: red; display: none;">Invalid file type or size exceeds 2MB</span>\
                             </div>\
                         </div>\
                     </div>\
@@ -201,6 +217,7 @@ $(document).on('click', '.add_button', function(){
                             <div class="custom-file">\
                                 <input type="file" class="custom-file-input" id="question_image_2'+newQuestionCount+'" name="questions['+newQuestionCount+'][question_image_2]">\
                                 <label class="custom-file-label" for="question_image_2'+newQuestionCount+'">Choose file</label>\
+                                <span class="error-message" style="color: red; display: none;">Invalid file type or size exceeds 2MB</span>\
                             </div>\
                         </div>\
                     </div>\
@@ -229,7 +246,6 @@ $(document).on('click', '.add_button', function(){
                     </div>\
                 </div>\
             </div>\
-            <hr>\
             <div class="mc_section_'+newQuestionCount+'" style="display: none;">\
                 <div class="row g-3 align-center">\
                     <div class="col-lg-3">\
@@ -321,19 +337,130 @@ $(document).on('click', '.add_button', function(){
                     </div>\
                 </div>\
             </div>\
-            <a href="javascript:void(0);" class="btn btn-danger remove_button" data-box="'+newQuestionCount+'"><em class="icon ni ni-trash"></em> Remove Question</a>\
-            <hr>\
+            <div class="text-right" style="margin:5px 0px 5px 0px !important;"><a href="javascript:void(0);" class="btn btn-danger remove_button" data-box="'+newQuestionCount+'"><em class="icon ni ni-trash"></em> Remove Question</a></div>\
         </div>\
     ';
 
-    $('.question-block').append(fieldHTML); //Add field html
+    return fieldHTML;
+}
+
+
+
+// Add more questions code goes here
+$(document).on('click', '.addQuestionSameBackground', function(){ 
+    const maxQuestions = $('#maxQuestions').val();
+    const totalQuestionBoxes = $('.question-box').length;
+    if(totalQuestionBoxes >= maxQuestions){
+        alert("Can't add more than "+maxQuestions+" questions");
+        return;
+    }
+
+    var section = $(this).data('section');
+
+    let lastQuestionBox = $('.question-box').last();
+    // Extract the number from the class name
+    let lastQuestionWrapper = lastQuestionBox.attr('class').match(/question-wrapper-(\d+)/)[1];
+    let newQuestionCount = parseFloat(lastQuestionWrapper)+1;
+    
+    var questionHtml = questionFileds(newQuestionCount)
+
+    $('.question-block-'+section).append(questionHtml); //Add field html
+    updateQuestionsBasedOnCheckbox();
+});
+
+// Add more questions code goes here
+$(document).on('click', '.addNewSection', function(){ 
+
+    const maxQuestions = $('#maxQuestions').val();
+    const totalQuestionBoxes = $('.question-box').length;
+    if(totalQuestionBoxes >= maxQuestions){
+        alert("Can't add more than "+maxQuestions+" questions");
+        return;
+    }
+
+    var section = $(this).data('section');
+
+    let lastSectionBox = $('.section-box').last();
+    // Extract the number from the class name
+    let lastSectionCount = lastSectionBox.attr('class').match(/sections-(\d+)/)[1];
+    let newSectionCount = parseFloat(lastSectionCount)+1;
+
+    let lastQuestionBox = $('.question-box').last();
+    // Extract the number from the class name
+    let lastQuestionWrapper = lastQuestionBox.attr('class').match(/question-wrapper-(\d+)/)[1];
+    let newQuestionCount = parseFloat(lastQuestionWrapper)+1;
+
+    var backgroundHtml = backgroundFields(newSectionCount, newQuestionCount)
+    $('.sections').append(backgroundHtml); //Add field html
+    updateQuestionsBasedOnCheckbox();
+
+    
 });
 
 $(document).on('click', '.remove_button', function(e){
     e.preventDefault();
     var boxCount = $(this).data('box');
     $('.question-wrapper-'+boxCount).remove();
-    $('.background_section_'+boxCount).remove();
+    removeEmptySectionBoxes();
+    updateQuestionsBasedOnCheckbox();
 });
 
+function removeEmptySectionBoxes() {
+    // Loop through each section-box
+    $('.section-box').each(function() {
+        // Check if it has any child with the class question-box
+        if ($(this).find('.question-box').length === 0) {
+            // If no question-box is found, remove the section-box
+            $(this).remove();
+        }
+    });
+}
+
+function getRandomLightColor() {
+    const r = Math.floor(Math.random() * 20) + 230; // Red (230-250)
+    const g = Math.floor(Math.random() * 20) + 230; // Green (230-250)
+    const b = Math.floor(Math.random() * 50) + 180; // Blue (180-230)
+    return `rgb(${r}, ${g}, ${b})`; // Return the color in RGB format
+}
+
+
+// Function to validate file input
+function validateFile(input) {
+    const file = input.files[0]; // Get the selected file
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif']; // Allowed file types
+    const maxSize = 2 * 1024 * 1024; // Max file size (2MB)
+
+    // Reset any previous error message
+    $(input).siblings('.error-message').hide();
+    $(input).siblings('label').text('Choose file'); // Reset label text to default
+
+    // Check if a file is selected
+    if (file) {
+        const fileType = file.type; // Get the file type
+        const fileSize = file.size; // Get the file size in bytes
+
+        // Check file type
+        if (!allowedTypes.includes(fileType)) {
+            $(input).siblings('.error-message').text('Only image files (jpg, png, gif) are allowed.').show();
+            $(input).siblings('label').text('Invalid file type'); // Update label text to reflect the error
+            input.value = ''; // Clear the input value
+            return false;
+        }
+
+        // Check file size
+        if (fileSize > maxSize) {
+            $(input).siblings('.error-message').text('File size must not exceed 2MB.').show();
+            $(input).siblings('label').text('File size exceeds 2MB'); // Update label text to reflect the error
+            input.value = ''; // Clear the input value
+            return false;
+        }
+    }
+
+    return true; // If all validations pass
+}
+
+// Attach validation to the file input
+$(document).on('change', 'input[type="file"]', function () {
+    validateFile(this);
+});
 

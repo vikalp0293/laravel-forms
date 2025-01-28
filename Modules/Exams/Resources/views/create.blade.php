@@ -12,7 +12,7 @@ $userPermission = \Session::get('userPermission');
     </div><!-- .nk-block-head -->
     <form role="form" method="post" enctype="multipart/form-data" >
         @csrf
-        
+        <input type="" name="maxQuestions" id="maxQuestions" value="{{ $maxQuestions }}">
         <div class="nk-block">
             <div class="card card-bordered sp-plan">
                 <div class="row no-gutters">
@@ -187,14 +187,14 @@ $userPermission = \Session::get('userPermission');
 
 
                             <div class="sections">
-                                <div class="sections-1" style="border: 1px solid; padding: 10px;">
+                                <div class="section-box sections-1" style="border: 1px solid; padding: 10px;background-color: rgb(241, 243, 202);">
                                     <div class="row g-3 align-center">
                                         <div class="col-lg-3">
                                             <label class="form-label" for="Background">Background</label>
                                         </div>
                                         <div class="col-lg-9">
                                             <div class="custom-control custom-control-md custom-switch">
-                                                <input type="checkbox" data-backgroundsection="1" name="background" id="background_1" class="custom-control-input background" value="1" data-parsley-multiple="background">
+                                                <input type="checkbox" data-backgroundsection="1" name="background[1][background]" id="background_1" class="custom-control-input background" value="1" data-parsley-multiple="background">
                                                 <label class="custom-control-label" for="background_1"> </label>
                                             </div>
                                         </div>
@@ -208,7 +208,7 @@ $userPermission = \Session::get('userPermission');
                                                 </div>
                                             </div>
                                             <div class="col-lg-9">
-                                                <textarea data-parsley-errors-container=".parsley-container-instructions" id="instructions"  name="instructions" class="form-control background-image-input-1" autocomplete="off"></textarea>
+                                                <textarea data-parsley-errors-container=".parsley-container-instructions" id="instructions"  name="background[1][instructions]" class="form-control background-image-input-1" autocomplete="off"></textarea>
                                             </div>
                                         </div>
 
@@ -220,7 +220,7 @@ $userPermission = \Session::get('userPermission');
                                                 </div>
                                             </div>
                                             <div class="col-lg-9">
-                                                <textarea  data-parsley-errors-container=".parsley-container-instructions_2" id="instructions_2" name="instructions_2" class="form-control background-image-input-1" autocomplete="off"></textarea>
+                                                <textarea  data-parsley-errors-container=".parsley-container-instructions_2" id="instructions_2" name="background[1][instructions_2]" class="form-control background-image-input-1" autocomplete="off"></textarea>
                                             </div>
                                         </div>
 
@@ -232,8 +232,9 @@ $userPermission = \Session::get('userPermission');
                                                 <div class="form-group">
                                                     <div class="form-control-wrap">
                                                         <div class="custom-file">
-                                                            <input type="file" class="custom-file-input background-image-input-1" id="image_upload_1" name="image_upload_1">
+                                                            <input type="file" class="custom-file-input background-image-input-1" id="image_upload_1" name="background[1][image_upload_1]">
                                                             <label class="custom-file-label" for="image_upload_1">Choose file</label>
+                                                            <span class="error-message" style="color: red; display: none;">Invalid file type or size exceeds 2MB</span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -247,7 +248,7 @@ $userPermission = \Session::get('userPermission');
                                                 </div>
                                             </div>
                                             <div class="col-lg-9">
-                                                <textarea  data-parsley-errors-container=".parsley-container-instructions_3" id="instructions_3" name="instructions_3" class="form-control background-image-input-1" autocomplete="off"></textarea>
+                                                <textarea  data-parsley-errors-container=".parsley-container-instructions_3" id="instructions_3" name="background[1][instructions_3]" class="form-control background-image-input-1" autocomplete="off"></textarea>
                                             </div>
                                         </div>
 
@@ -259,19 +260,20 @@ $userPermission = \Session::get('userPermission');
                                                 <div class="form-group">
                                                     <div class="form-control-wrap">
                                                         <div class="custom-file">
-                                                            <input type="file" class="custom-file-input background-image-input-1" id="image_upload_2" name="image_upload_2">
+                                                            <input type="file" class="custom-file-input background-image-input-1" id="image_upload_2" name="background[1][image_upload_2]">
                                                             <label class="custom-file-label" for="image_upload_2">Choose file</label>
+                                                            <span class="error-message" style="color: red; display: none;">Invalid file type or size exceeds 2MB</span>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>  
+                                        </div>
+                                        <hr>
                                     </div>
 
-                                    <div class="question-block">
-
+                                    <div class="question-block-1">
                                         <div class="question-box question-wrapper-1">
-
+                                            <input type="text" name="questions[1][background]" class="question" value="0">
                                             <div class="row g-3 align-center">
                                                 <div class="col-lg-3">
                                                     <div class="form-group">
@@ -293,6 +295,7 @@ $userPermission = \Session::get('userPermission');
                                                             <div class="custom-file">
                                                                 <input type="file" class="custom-file-input" id="question_image_1" name="questions[1][question_image_1]">
                                                                 <label class="custom-file-label" for="question_image_1">Choose file</label>
+                                                                <span class="error-message" style="color: red; display: none;">Invalid file type or size exceeds 2MB</span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -320,6 +323,7 @@ $userPermission = \Session::get('userPermission');
                                                             <div class="custom-file">
                                                                 <input type="file" class="custom-file-input" id="question_image_2" name="questions[1][question_image_2]">
                                                                 <label class="custom-file-label" for="question_image_2">Choose file</label>
+                                                                <span class="error-message" style="color: red; display: none;">Invalid file type or size exceeds 2MB</span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -456,7 +460,7 @@ $userPermission = \Session::get('userPermission');
                                     </div>
 
                                     <div class="text-right">
-                                        <a style="display:none !important;" href="javascript:void(0);" data-background="1" class="btn btn-secondary d-none d-md-inline-flex addQuestionBtn_1"><em class="icon ni ni-plus"></em><span>Add Another Question Using Same Background</span></a>
+                                        <a style="display:none !important;" href="javascript:void(0);" data-section="1" class="btn btn-secondary d-none d-md-inline-flex addQuestionSameBackground addQuestionBtn_1"><em class="icon ni ni-plus"></em><span>Add Another Question Using Same Background</span></a>
                                     </div>
 
                                 </div>
@@ -464,7 +468,7 @@ $userPermission = \Session::get('userPermission');
                             </div>
                             <br>
                             <div class="text-right">
-                                <a href="javascript:void(0);" data-background="new-background" class="btn btn-info d-none d-md-inline-flex btn-nobackground add_button"><em class="icon ni ni-plus"></em><span>Add Another Question Not Using Same Background</span></a>
+                                <a href="javascript:void(0);" data-background="new-background" class="btn btn-info d-none d-md-inline-flex btn-nobackground addNewSection"><em class="icon ni ni-plus"></em><span>Add Another Question Not Using Same Background</span></a>
                             </div>
                         </div>
                     </div>

@@ -193,7 +193,7 @@ class ExamsController extends Controller
     {
         try {
             $authUser = \Auth::user();
-            
+            $maxQuestions = env('MAX_QUESTIONS'); // Your secret key from the .env file
 
             $subjects = Subject::where('status','active')->orderBy('name','asc')->get();
             $grades = Grade::where('status','active')->orderBy('name','asc')->get();
@@ -204,6 +204,7 @@ class ExamsController extends Controller
                 'subjects' => $subjects,
                 'grades' => $grades,
                 'states' => $states,
+                'maxQuestions' => $maxQuestions,
             ]);
 
         } catch (Exception $e) {
