@@ -124,7 +124,7 @@ function backgroundFields(newSectionCount, newQuestionCount){
                         <div class="form-group">\
                             <div class="form-control-wrap">\
                                 <div class="custom-file">\
-                                    <input type="file" class="custom-file-input background-image-input-'+newSectionCount+'" id="image_upload_1" name="backgrounds['+newSectionCount+'][image_upload_1]">\
+                                    <input type="file" class="custom-file-input background-image-input-'+newSectionCount+'" id="image_upload_1" name="backgrounds['+newSectionCount+'][image_upload_1]" accept=".png, .jpg, .jpeg">\
                                     <label class="custom-file-label" for="image_upload_1">Choose file</label>\
                                     <span class="error-message" style="color: red; display: none;">Invalid file type or size exceeds 2MB</span>\
                                 </div>\
@@ -150,7 +150,7 @@ function backgroundFields(newSectionCount, newQuestionCount){
                         <div class="form-group">\
                             <div class="form-control-wrap">\
                                 <div class="custom-file">\
-                                    <input type="file" class="custom-file-input background-image-input-'+newSectionCount+'" id="image_upload_2" name="backgrounds['+newSectionCount+'][image_upload_2]">\
+                                    <input type="file" class="custom-file-input background-image-input-'+newSectionCount+'" id="image_upload_2" name="backgrounds['+newSectionCount+'][image_upload_2]" accept=".png, .jpg, .jpeg">\
                                     <label class="custom-file-label" for="image_upload_2">Choose file</label>\
                                     <span class="error-message" style="color: red; display: none;">Invalid file type or size exceeds 2MB</span>\
                                 </div>\
@@ -196,7 +196,7 @@ function questionFileds(newQuestionCount){
                     <div class="form-group">\
                         <div class="form-control-wrap">\
                             <div class="custom-file">\
-                                <input type="file" class="custom-file-input" id="question_image_1'+newQuestionCount+'" name="questions['+newQuestionCount+'][question_image_1]">\
+                                <input type="file" class="custom-file-input" id="question_image_1'+newQuestionCount+'" name="questions['+newQuestionCount+'][question_image_1]"  accept=".png, .jpg, .jpeg">\
                                 <label class="custom-file-label" for="question_image_1'+newQuestionCount+'">Choose file</label>\
                                 <span class="error-message" style="color: red; display: none;">Invalid file type or size exceeds 2MB</span>\
                             </div>\
@@ -223,7 +223,7 @@ function questionFileds(newQuestionCount){
                     <div class="form-group">\
                         <div class="form-control-wrap">\
                             <div class="custom-file">\
-                                <input type="file" class="custom-file-input" id="question_image_2'+newQuestionCount+'" name="questions['+newQuestionCount+'][question_image_2]">\
+                                <input type="file" class="custom-file-input" id="question_image_2'+newQuestionCount+'" name="questions['+newQuestionCount+'][question_image_2]"  accept=".png, .jpg, .jpeg">\
                                 <label class="custom-file-label" for="question_image_2'+newQuestionCount+'">Choose file</label>\
                                 <span class="error-message" style="color: red; display: none;">Invalid file type or size exceeds 2MB</span>\
                             </div>\
@@ -473,6 +473,8 @@ function validateFile(input) {
             return false;
         }
     }
+
+    $(input).closest('.custom-file').find('.custom-file-label').text(file.name);
 
     return true; // If all validations pass
 }

@@ -20,7 +20,7 @@ var fieldHTML = '\
                     <div class="form-group">\
                         <div class="form-control-wrap">\
                             <div class="custom-file">\
-                                <input type="file" class="custom-file-input" id="question_image_1'+newQuestionCount+'" name="questions['+newQuestionCount+'][question_image_1]">\
+                                <input type="file" class="custom-file-input" id="question_image_1'+newQuestionCount+'" name="questions['+newQuestionCount+'][question_image_1]"  accept=".png, .jpg, .jpeg">\
                                 <label class="custom-file-label" for="question_image_1'+newQuestionCount+'">Choose file</label>\
                             </div>\
                         </div>\
@@ -46,7 +46,7 @@ var fieldHTML = '\
                     <div class="form-group">\
                         <div class="form-control-wrap">\
                             <div class="custom-file">\
-                                <input type="file" class="custom-file-input" id="question_image_2'+newQuestionCount+'" name="questions['+newQuestionCount+'][question_image_2]">\
+                                <input type="file" class="custom-file-input" id="question_image_2'+newQuestionCount+'" name="questions['+newQuestionCount+'][question_image_2]"  accept=".png, .jpg, .jpeg">\
                                 <label class="custom-file-label" for="question_image_2'+newQuestionCount+'">Choose file</label>\
                             </div>\
                         </div>\

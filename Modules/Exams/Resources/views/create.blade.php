@@ -232,7 +232,7 @@ $userPermission = \Session::get('userPermission');
                                                 <div class="form-group">
                                                     <div class="form-control-wrap">
                                                         <div class="custom-file">
-                                                            <input type="file" class="custom-file-input background-image-input-1" id="image_upload_1" name="backgrounds[1][image_upload_1]">
+                                                            <input type="file" class="custom-file-input background-image-input-1" id="image_upload_1" name="backgrounds[1][image_upload_1]" accept=".png, .jpg, .jpeg" >
                                                             <label class="custom-file-label" for="image_upload_1">Choose file</label>
                                                             <span class="error-message" style="color: red; display: none;">Invalid file type or size exceeds 2MB</span>
                                                         </div>
@@ -260,7 +260,7 @@ $userPermission = \Session::get('userPermission');
                                                 <div class="form-group">
                                                     <div class="form-control-wrap">
                                                         <div class="custom-file">
-                                                            <input type="file" class="custom-file-input background-image-input-1" id="image_upload_2" name="backgrounds[1][image_upload_2]">
+                                                            <input type="file" class="custom-file-input background-image-input-1" id="image_upload_2" name="backgrounds[1][image_upload_2]" accept=".png, .jpg, .jpeg" >
                                                             <label class="custom-file-label" for="image_upload_2">Choose file</label>
                                                             <span class="error-message" style="color: red; display: none;">Invalid file type or size exceeds 2MB</span>
                                                         </div>
@@ -294,7 +294,7 @@ $userPermission = \Session::get('userPermission');
                                                     <div class="form-group">
                                                         <div class="form-control-wrap">
                                                             <div class="custom-file">
-                                                                <input type="file" class="custom-file-input" id="question_image_1" name="questions[1][question_image_1]">
+                                                                <input type="file" class="custom-file-input" id="question_image_1" name="questions[1][question_image_1]" accept=".png, .jpg, .jpeg" >
                                                                 <label class="custom-file-label" for="question_image_1">Choose file</label>
                                                                 <span class="error-message" style="color: red; display: none;">Invalid file type or size exceeds 2MB</span>
                                                             </div>
@@ -322,7 +322,7 @@ $userPermission = \Session::get('userPermission');
                                                     <div class="form-group">
                                                         <div class="form-control-wrap">
                                                             <div class="custom-file">
-                                                                <input type="file" class="custom-file-input" id="question_image_2" name="questions[1][question_image_2]">
+                                                                <input type="file" class="custom-file-input" id="question_image_2" name="questions[1][question_image_2]" accept=".png, .jpg, .jpeg" >
                                                                 <label class="custom-file-label" for="question_image_2">Choose file</label>
                                                                 <span class="error-message" style="color: red; display: none;">Invalid file type or size exceeds 2MB</span>
                                                             </div>
