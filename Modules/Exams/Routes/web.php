@@ -16,15 +16,13 @@ Route::group(['middleware' => [],'prefix' => 'exams'], function () {
     
 
     Route::get('/', 'ExamsController@index');
-    Route::get('/new', 'ExamsController@newUsers');
     Route::get('/create', 'ExamsController@create');
-    Route::get('/create-old', 'ExamsController@createOld');
-    Route::get('/add', 'ExamsController@add');
     Route::post('/create', 'ExamsController@store');
 
-    Route::get('/edit/{user_id}', 'ExamsController@edit');
-    Route::post('/edit/{user_id}', 'ExamsController@update');
-    Route::get('/delete/{user_id}', 'ExamsController@destroy');
+    Route::get('/edit/{exam_id}', 'ExamsController@edit');
+    Route::post('/edit/{exam_id}', 'ExamsController@update');
+
+    Route::get('/delete/{exam_id}', 'ExamsController@destroy');
     
     Route::get('/get-topics-by-subject/{id}', 'ExamsController@getTopicBySubject');
     Route::get('/get-subtopics-by-topic/{id}', 'ExamsController@getSubtopicByTopic');

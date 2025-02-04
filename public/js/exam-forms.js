@@ -3,7 +3,9 @@ $(document).ready(function(){
     var root_url = "<?php echo url('/'); ?>";
 
     var subject = $('#subject').val();
-    if(subject != ''){
+    var uuid = $('#uuid').val();
+    
+    if(subject != '' && uuid == undefined){
         getTopics(subject);
     }
 
@@ -70,13 +72,18 @@ function updateQuestionsBasedOnCheckbox() {
         // Find all inputs with class 'question' inside the same section and update their value
         $(`.sections-${sectionId} .question-box .question`).val(value);
     });
+
+    $('.question-box').each(function (index) {
+        const questionNumber = index + 1; // Get question number (1-based index)
+        $(this).find('h6').text(`Question ${questionNumber}`);
+    });
 }
 
 function backgroundFields(newSectionCount, newQuestionCount){
     const randomColor = getRandomLightColor();
     var background = '\
         <br>\
-        <div class="section-box sections-'+newSectionCount+'" style="border: 1px solid; padding: 10px; background-color:'+randomColor+';">\
+        <div class="section-box sections-'+newSectionCount+'" style="border: 1px solid; padding: 15px; border-radius: 10px; box-shadow: 10px 10px #969b9d; background-color:'+randomColor+';">\
             <div class="row g-3 align-center">\
                 <div class="col-lg-3">\
                     <label class="form-label" for="Background">Background</label>\
@@ -169,7 +176,8 @@ function questionFileds(newQuestionCount){
     var fieldHTML = '\
         <div class="question-box question-wrapper-'+newQuestionCount+'">\
             <hr>\
-            <input type="text" name="questions['+newQuestionCount+'][background]" class="question">\
+            <h6 class="text-center mt-3"> Question 1</h6>\
+            <input type="hidden" name="questions['+newQuestionCount+'][background]" class="question">\
             <div class="row g-3 align-center">\
                 <div class="col-lg-3">\
                     <div class="form-group">\
@@ -231,7 +239,7 @@ function questionFileds(newQuestionCount){
                     <div class="form-group">\
                         <div class="form-control-wrap">\
                             <div class="custom-control custom-control-xs custom-radio">\
-                                <input type="radio" name="questions['+newQuestionCount+'][question_type]" data-question="'+newQuestionCount+'" id="question_type_mc_'+newQuestionCount+'" class="custom-control-input radio-btn question-choice" value="mc">\
+                                <input type="radio" name="questions['+newQuestionCount+'][question_type]" data-question="'+newQuestionCount+'" id="question_type_mc_'+newQuestionCount+'" class="custom-control-input radio-btn question-choice" value="mc" checked>\
                                 <label class="custom-control-label"  for="question_type_mc_'+newQuestionCount+'">Make it MC</label>\
                             </div>\
                             <div class="custom-control custom-control-xs custom-radio">\
@@ -246,7 +254,7 @@ function questionFileds(newQuestionCount){
                     </div>\
                 </div>\
             </div>\
-            <div class="mc_section_'+newQuestionCount+'" style="display: none;">\
+            <div class="mc_section_'+newQuestionCount+'" >\
                 <div class="row g-3 align-center">\
                     <div class="col-lg-3">\
                         <x-inputs.verticalFormLabel label="MC Options" for="default-112"/>\
@@ -263,7 +271,7 @@ function questionFileds(newQuestionCount){
                                 <td></td>\
                                 <td style="width:80%">\
                                     <div class="custom-radio">\
-                                        <input type="radio" name="questions['+newQuestionCount+'][correct_option]" id="option_radio_1_'+newQuestionCount+'" class="custom-control-input radio-btn mc_options_'+newQuestionCount+'" value="1">\
+                                        <input type="radio" name="questions['+newQuestionCount+'][correct_option]" id="option_radio_1_'+newQuestionCount+'" class="custom-control-input radio-btn mc_options_'+newQuestionCount+'" value="1" checked>\
                                         <label class="custom-control-label col-lg-9"  for="option_radio_1_'+newQuestionCount+'">\
                                             <input type="text" name="questions['+newQuestionCount+'][option1]" placeholder="Option 1" class="form-control mc_options_'+newQuestionCount+'"  required>\
                                         </label>\
@@ -319,7 +327,7 @@ function questionFileds(newQuestionCount){
                 <div class="row g-3 align-center">\
                     <div class="col-lg-3">\
                         <div class="form-group">\
-                            <label class="form-label" for="sa_answer_1">Short Answer 2<span class="text-danger">*</span></label>\
+                            <label class="form-label" for="sa_answer_1">Short Answer 2</label>\
                         </div>\
                     </div>\
                     <div class="col-lg-9">\
@@ -351,7 +359,12 @@ $(document).on('click', '.addQuestionSameBackground', function(){
     const maxQuestions = $('#maxQuestions').val();
     const totalQuestionBoxes = $('.question-box').length;
     if(totalQuestionBoxes >= maxQuestions){
-        alert("Can't add more than "+maxQuestions+" questions");
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: "Can't add more than "+maxQuestions+" questions",
+          //footer: '<a href>Why do I have this issue?</a>'
+        })
         return;
     }
 
@@ -374,7 +387,12 @@ $(document).on('click', '.addNewSection', function(){
     const maxQuestions = $('#maxQuestions').val();
     const totalQuestionBoxes = $('.question-box').length;
     if(totalQuestionBoxes >= maxQuestions){
-        alert("Can't add more than "+maxQuestions+" questions");
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: "Can't add more than "+maxQuestions+" questions",
+          //footer: '<a href>Why do I have this issue?</a>'
+        })
         return;
     }
 

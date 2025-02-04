@@ -187,7 +187,7 @@ $userPermission = \Session::get('userPermission');
 
 
                             <div class="sections">
-                                <div class="section-box sections-1" style="border: 1px solid; padding: 10px;background-color: rgb(241, 243, 202);">
+                                <div class="section-box sections-1" style="border: 1px solid; padding: 15px; border-radius: 10px; box-shadow: 10px 10px #969b9d; background-color: rgb(241, 243, 202);">
                                     <div class="row g-3 align-center">
                                         <div class="col-lg-3">
                                             <label class="form-label" for="Background">Background</label>
@@ -273,7 +273,8 @@ $userPermission = \Session::get('userPermission');
 
                                     <div class="question-block-1">
                                         <div class="question-box question-wrapper-1">
-                                            <input type="text" name="questions[1][background]" class="question" value="0">
+                                            <h6 class="text-center mt-3"> Question 1</h6>
+                                            <input type="hidden" name="questions[1][background]" class="question" value="0">
                                             <div class="row g-3 align-center">
                                                 <div class="col-lg-3">
                                                     <div class="form-group">
@@ -339,7 +340,7 @@ $userPermission = \Session::get('userPermission');
                                                         <div class="form-control-wrap">
 
                                                             <div class="custom-control custom-control-xs custom-radio">
-                                                                <input type="radio" name="questions[1][question_type]" data-question="1" id="question_type_mc_1" class="custom-control-input radio-btn question-choice" value="mc">
+                                                                <input type="radio" name="questions[1][question_type]" data-question="1" id="question_type_mc_1" class="custom-control-input radio-btn question-choice" value="mc" checked>
                                                                 <label class="custom-control-label"  for="question_type_mc_1">Make it MC</label>
                                                             </div>
 
@@ -358,7 +359,7 @@ $userPermission = \Session::get('userPermission');
                                                 </div>
                                             </div>
                                             <br>
-                                            <div class="mc_section_1" style="display: none;">
+                                            <div class="mc_section_1">
                                                 <div class="row g-3 align-center">
                                                     <div class="col-lg-3">
                                                         <x-inputs.verticalFormLabel label="MC Options" for="default-112"/>
@@ -375,7 +376,7 @@ $userPermission = \Session::get('userPermission');
                                                                 <td></td>
                                                                 <td style="width:80%">
                                                                     <div class="custom-radio">
-                                                                        <input type="radio" name="questions[1][correct_option]" id="option_radio_1" class="custom-control-input radio-btn mc_options_1" value="1">
+                                                                        <input type="radio" name="questions[1][correct_option]" id="option_radio_1" class="custom-control-input radio-btn mc_options_1" value="1" checked>
                                                                         <label class="custom-control-label col-lg-9"  for="option_radio_1">
                                                                             <input type="text" name="questions[1][option1]" placeholder="Option 1" class="form-control mc_options_1">
                                                                         </label>
@@ -435,7 +436,7 @@ $userPermission = \Session::get('userPermission');
                                                 <div class="row g-3 align-center">
                                                     <div class="col-lg-3">
                                                         <div class="form-group">
-                                                            <label class="form-label" for="sa_answer_1">Short Answer 2<span class="text-danger">*</span></label>
+                                                            <label class="form-label" for="sa_answer_1">Short Answer 2</label>
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-9">

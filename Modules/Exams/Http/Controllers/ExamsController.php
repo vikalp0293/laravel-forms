@@ -27,6 +27,10 @@ use Modules\Masters\Entities\Grade;
 use Modules\Masters\Entities\Topic;
 use Modules\Masters\Entities\Subtopic;
 
+use Modules\Exams\Entities\Exam;
+use Modules\Exams\Entities\ExamBackground;
+use Modules\Exams\Entities\ExamQuestion;
+
 class ExamsController extends Controller
 {
 
@@ -43,43 +47,19 @@ class ExamsController extends Controller
     
     public function index(Request $request)
     {
-        $userPermission = \Session::get('userPermission');
 
         $authUser = \Auth::user();
 
         $role = $authUser->getRoleNames()->toArray();
 
-        $data = User::from('users as u')
-                 ->select('u.id',DB::raw("concat(u.first_name, ' ', u.last_name) as name"),'u.email','u.phone_number','u.created_at','u.updated_at','r.name as role','r.label as roleName','u.status','s.name as subject','g.name as grade')
-                ->leftJoin('model_has_roles as mr','mr.model_id','=','u.id')
-                ->leftJoin('roles as r','mr.role_id','=','r.id')
-                ->leftJoin('m_subjects as s','s.id','=','u.subject_id')
-                ->leftJoin('m_grades as g','g.id','=','u.grade_id')
-                ->where('u.id',0)
-                ->where('r.name','generaluser')
-                ->where(function ($query) use ($request) {
-                    if (!empty($request->toArray())) {
-                        if ($request->get('name') != '') {
-                            $query->where('u.name', $request->get('name'));
-                        }
-                        if ($request->get('contact_number') != '') {
-                            $query->where('u.phone_number', $request->get('contact_number'));
-                        }
-                        if((isset($request->fromDate) && isset($request->toDate))) {
-                            $dateFrom =  date('Y-m-d',strtotime($request->fromDate));
-                            $dateTo =  date('Y-m-d',strtotime($request->toDate. ' +1 day'));
-                            $query->whereBetween('u.created_at', array($dateFrom, $dateTo));
-                        } elseif (isset($request->fromDate)) {
-
-                            $dateFrom =  date('Y-m-d',strtotime($request->fromDate));
-                            $query->where('u.created_at', '>=', $dateFrom);
-                        } elseif (isset($request->toDate)) {
-                            $dateTo =  date('Y-m-d',strtotime($request->toDate));
-                            $query->where('u.created_at', '<=', $dateTo);
-                        }
-                    }
-                })
-                ->orderby('u.id','desc')
+        $data = Exam::from('exams as e')
+                 ->select('e.id','e.uuid','e.test_number','e.title','e.total_questions','e.created_at','e.status','ms.name as subject','mt.name as topic','mst.name as subtopic','st.name as state','g.name as grade')
+                ->leftJoin('m_subjects as ms','ms.id','=','e.subject')
+                ->leftJoin('m_topics as mt','mt.id','=','e.topic')
+                ->leftJoin('m_sub_topics as mst','mst.id','=','e.subtopic')
+                ->leftJoin('m_states as st','st.id','=','e.state')
+                ->leftJoin('m_grades as g','g.id','=','e.grade')
+                ->orderby('e.id','desc')
                 ->get();
         $usersCount = 0;
         if(!empty($data->toArray())){
@@ -89,44 +69,28 @@ class ExamsController extends Controller
         if ($request->ajax()) {
             return Datatables::of($data)
                     ->addIndexColumn()
-                    ->addColumn('name', function($row) use ($userPermission){
-                            $detailLink = '#';
-
-                            $username = $row->name.' '.$row->last_name;
-
-                            if(!is_null($row->file)){
-                                $file = public_path('uploads/users/') . $row->file;
-                            }
-
-                            if(!is_null($row->file) && file_exists($file))
-                                $avatar = "<img src=".url('uploads/users/'.$row->file).">";
-                            else
-                                $avatar = "<span>".\Helpers::getAcronym($username)."</span>";
+                    ->addColumn('title', function($row) {
+                            $detailLink = url('/').'/exams/edit/'.$row->uuid;
                             
-
-                            $name = '
+                            $title = '
                                         <a href="'.$detailLink.'">
                                             <div class="user-card">
-                                                <div class="user-avatar bg-primary">
-                                                    '.$avatar.'
-                                                </div>
                                                 <div class="user-info">
-                                                    <span class="tb-lead">'.$row->shop_name.' <span class="dot dot-success d-md-none ml-1"></span></span>
-                                                    <span>'.$username.' </span>
+                                                    <span class="tb-lead">'.$row->title.' <span class="dot dot-success d-md-none ml-1"></span></span>
                                                 </div>
                                             </div>
                                         </a>
                                     ';
-                            return $name;
+                            return $title;
                     })
                     ->addColumn('status', function ($row) {
-                        if($row->status == 1){
+                        if($row->status == 'active'){
                             $statusValue = 'Active';
                         }else{
                             $statusValue = 'Inactive';
                         }
 
-                        $value = ($row->status == '1') ? 'badge badge-success' : 'badge badge-danger';
+                        $value = ($row->status == 'active') ? 'badge badge-success' : 'badge badge-danger';
                         $status = '
                             <span class="tb-sub">
                                 <span class="'.$value.'">
@@ -136,9 +100,9 @@ class ExamsController extends Controller
                         ';
                         return $status;
                     })
-                    ->addColumn('action', function($row) use ($userPermission){
-                           $edit = url('/').'/user/edit/'.$row->id;
-                           $delete = url('/').'/user/delete/'.$row->id;
+                    ->addColumn('action', function($row) {
+                           $edit = url('/').'/exams/edit/'.$row->uuid;
+                           $delete = url('/').'/exams/delete/'.$row->id;
                            $confirm = '"Are you sure, you want to delete it?"';
 
                             $editBtn = "<li>
@@ -153,11 +117,6 @@ class ExamsController extends Controller
                                         </a>
                                     </li>"; 
 
-                            $logbtn = '<li><a href="#" data-resourceId="'.$row->id.'" class="audit_logs"><em class="icon ni ni-list"></em> <span>Audit Logs</span></a></li>';
-
-                            $changePassword = '';
-                            // $changePassword = '<li><a href="#" data-resourceId="'.$row->id.'" class="changePassword"><em class="icon ni ni-lock-alt"></em> <span>Update Password</span></a></li>';
-
                             $btn = '';
                             $btn .= '<ul class="nk-tb-actio ns gx-1">
                                         <li>
@@ -168,8 +127,7 @@ class ExamsController extends Controller
                                         ';
 
                            $btn .=       $editBtn."
-                                        ".$deleteBtn."
-                                        ".$changePassword;
+                                        ".$deleteBtn;
 
                             $btn .= "</ul>
                                             </div>
@@ -181,7 +139,7 @@ class ExamsController extends Controller
                     ->addColumn('created_at', function ($row) {
                         return date(\Config::get('constants.DATE.DATE_FORMAT') , strtotime($row->created_at));
                     })
-                    ->rawColumns(['action','created_at','name','updated_at','status',])
+                    ->rawColumns(['action','created_at','title','status',])
                     ->make(true);
         }
 
@@ -212,21 +170,90 @@ class ExamsController extends Controller
         }
     }
 
-    public function createOld(Request $request)
+    public function edit($uuid)
     {
         try {
             $authUser = \Auth::user();
-            
+            $exam = Exam::from('exams as e')->where('e.uuid',$uuid)->first();
 
+            if(!$exam){
+                return redirect('exams')->with('error', 'Exam not found');
+            }
+
+            $examQuestions = ExamQuestion::where('exam_id',$exam->id)->get();
+            $examBackgrounds = ExamBackground::where('exam_id',$exam->id)->get();
+
+            $mergedData = [];
+            $backgrounds = [];
+
+            // Organize backgrounds by background_number for quick lookup
+            foreach ($examBackgrounds->toArray() as $background) {
+                $backgrounds[$background['background_number']] = $background;
+            }
+
+            // Track grouped questions inline to maintain order
+            $groupedQuestions = [];
+
+            foreach ($examQuestions->toArray() as $question) {
+                $backgroundNumber = $question['background_number'];
+
+                if ($backgroundNumber == 0) {
+                    // Keep background_number = 0 questions separate, preserving order
+                    $mergedData[] = [
+                        'background' => [],
+                        'questions' => [$question]
+                    ];
+                } else {
+                    // If already added, append to existing group
+                    if (!isset($groupedQuestions[$backgroundNumber])) {
+                        $groupedQuestions[$backgroundNumber] = [
+                            'background' => $backgrounds[$backgroundNumber] ?? [],
+                            'questions' => []
+                        ];
+                        $mergedData[] = &$groupedQuestions[$backgroundNumber]; // Maintain insertion order
+                    }
+                    $groupedQuestions[$backgroundNumber]['questions'][] = $question;
+                }
+            }
+
+            // Ensure backgrounds with no questions are also included
+            foreach ($backgrounds as $backgroundNumber => $background) {
+                $hasQuestions = array_filter($mergedData, function ($item) use ($backgroundNumber) {
+                    return !empty($item['questions']) && $item['questions'][0]['background_number'] == $backgroundNumber;
+                });
+
+                if (!$hasQuestions) {
+                    $mergedData[] = [
+                        'background' => $background,
+                        'questions' => []
+                    ];
+                }
+            }
+
+            // echo "<pre>";
+            // print_r($exam->toArray());
+            // print_r($examQuestions->toArray());
+            // print_r($examBackgrounds->toArray());
+            // echo "<br>----------------------------------------------<br>";
+            // print_r($mergedData);
+            // die;
+
+            $maxQuestions = env('MAX_QUESTIONS'); // Your secret key from the .env file
             $subjects = Subject::where('status','active')->orderBy('name','asc')->get();
             $grades = Grade::where('status','active')->orderBy('name','asc')->get();
             $states = State::where('status','active')->orderBy('name','asc')->get();
-            
+            $topics = Topic::where('status','active')->orderBy('name','asc')->get();
+            $subtopics = Subtopic::where('status','active')->orderBy('name','asc')->get();
 
-            return view('exams::form-bk',[
+            return view('exams::edit',[
                 'subjects' => $subjects,
                 'grades' => $grades,
                 'states' => $states,
+                'topics' => $topics,
+                'subtopics' => $subtopics,
+                'maxQuestions' => $maxQuestions,
+                'exam' => $exam,
+                'mergedData' => $mergedData,
             ]);
 
         } catch (Exception $e) {
@@ -235,31 +262,236 @@ class ExamsController extends Controller
     }
 
     public function store(Request $request){
-        echo "<pre>";
-        print_r($request->all());
-        die;
+        
+        try {
+            DB::beginTransaction();
+            $user = Auth::user();
+
+            $backgrounds = $request->input("backgrounds");
+            $questions = $request->input("questions");
+
+            $exam = new Exam();
+            $exam->uuid = \Str::uuid();
+            $exam->test_number = $this->createTestNumber();
+            $exam->title  = $request->exists("title") ? $request->input("title") : "";
+            $exam->description  = $request->exists("description") ? $request->input("description") : "";
+            $exam->subject  = $request->exists("subject") ? $request->input("subject") : "";
+            $exam->topic  = $request->exists("topic") ? $request->input("topic") : "";
+            $exam->subtopic  = $request->exists("subtopic") ? $request->input("subtopic") : "";
+            $exam->state  = $request->exists("state") ? $request->input("state") : "";
+            $exam->grade  = $request->exists("grade") ? $request->input("grade") : "";
+            $exam->total_questions  = count($questions);
+            $exam->created_by = $user->id;
+
+            if($exam->save()){
+                if(!empty($backgrounds)){
+                    
+                    foreach($request->backgrounds as $key => $bg){
+
+
+                        if(isset($bg['background']) && $bg['background'] != ''){
+
+                            $background = new ExamBackground();
+                            $background->exam_id = $exam->id;
+                            $background->background_number = $bg['background'];
+                            $background->instruction = $bg['instructions'];
+                            $background->instruction_two = $bg['instructions_2'];
+                            $background->instruction_three = $bg['instructions_3'];
+
+                            if (isset($bg['image_upload_1']) && count((array)$bg['image_upload_1'])) {
+                                $bgImageOne = $bg['image_upload_1'];
+                                $bgImageOneNameWithExt = $bgImageOne->getClientOriginalName();
+                                list($bgImageOne_width,$bgImageOne_height)=getimagesize($bgImageOne);
+                                // Get file path
+                                $originalName = pathinfo($bgImageOneNameWithExt, PATHINFO_FILENAME);
+                                $bgImageOneName = pathinfo($bgImageOneNameWithExt, PATHINFO_FILENAME);
+                                // Remove unwanted characters
+                                $bgImageOneName = preg_replace("/[^A-Za-z0-9 ]/", '', $bgImageOneName);
+                                $bgImageOneName = preg_replace("/\s+/", '-', $bgImageOneName);
+
+                                // Get the original image extension
+                                $extension = $bgImageOne->getClientOriginalExtension();
+                                if($extension != 'jpg' && $extension != 'jpeg' && $extension != 'png'){
+                                    return redirect('exams/create')->with('error', trans('messages.INVALID_IMAGE'));
+                                }
+                                $bgImageOneName = 'bgimg_'.$bgImageOneName.'_'.time().'.'.$extension;
+                                
+                                $destinationPath = public_path('uploads/questions/backgrounds');
+                                if($bgImageOne_width > 800){
+                                    $bgImageOne_canvas = Image::canvas(800, 800);
+                                    $bgImageOne_image = Image::make($bgImageOne->getRealPath())->resize(800, 800, function ($constraint) {
+                                        $constraint->aspectRatio();
+                                        $constraint->upsize();
+                                    });
+                                    $bgImageOne_canvas->insert($bgImageOne_image, 'center');
+                                    $bgImageOne_canvas->save($destinationPath.'/'.$bgImageOneName,80);
+                                }else{
+                                    $bgImageOne->move($destinationPath, $bgImageOneName);
+                                }
+                                $bgImageOne_file = public_path('uploads/questions/backgrounds/'. $bgImageOneName);
+
+                                $background->image_one = $bgImageOneNameWithExt;
+                            }
+
+                            if (isset($bg['image_upload_2']) && count((array)$bg['image_upload_2'])) {
+                                $bgImageTwo = $bg['image_upload_2'];
+                                $bgImageTwoNameWithExt = $bgImageTwo->getClientOriginalName();
+                                list($bgImageTwo_width,$bgImageTwo_height)=getimagesize($bgImageTwo);
+                                // Get file path
+                                $originalName = pathinfo($bgImageTwoNameWithExt, PATHINFO_FILENAME);
+                                $bgImageTwoName = pathinfo($bgImageTwoNameWithExt, PATHINFO_FILENAME);
+                                // Remove unwanted characters
+                                $bgImageTwoName = preg_replace("/[^A-Za-z0-9 ]/", '', $bgImageTwoName);
+                                $bgImageTwoName = preg_replace("/\s+/", '-', $bgImageTwoName);
+
+                                // Get the original image extension
+                                $extension = $bgImageTwo->getClientOriginalExtension();
+                                if($extension != 'jpg' && $extension != 'jpeg' && $extension != 'png'){
+                                    return redirect('exams/create')->with('error', trans('messages.INVALID_IMAGE'));
+                                }
+                                $bgImageTwoName = 'bgimg_'.$bgImageTwoName.'_'.time().'.'.$extension;
+                                
+                                $destinationPath = public_path('uploads/questions/backgrounds');
+                                if($bgImageTwo_width > 800){
+                                    $bgImageTwo_canvas = Image::canvas(800, 800);
+                                    $bgImageTwo_image = Image::make($bgImageTwo->getRealPath())->resize(800, 800, function ($constraint) {
+                                        $constraint->aspectRatio();
+                                        $constraint->upsize();
+                                    });
+                                    $bgImageTwo_canvas->insert($bgImageTwo_image, 'center');
+                                    $bgImageTwo_canvas->save($destinationPath.'/'.$bgImageTwoName,80);
+                                }else{
+                                    $bgImageTwo->move($destinationPath, $bgImageTwoName);
+                                }
+                                $bgImageTwo_file = public_path('uploads/questions/backgrounds/'. $bgImageTwoName);
+
+                                $background->image_two = $bgImageTwoNameWithExt;
+                            }
+
+                            $background->save();
+                        }
+                    }
+                }
+
+                if(!empty($questions)){
+                    foreach($request->questions as $key => $examQuestion){
+                        $question = new ExamQuestion();
+                        $question->exam_id = $exam->id;
+                        $question->background_number = $examQuestion['background'];
+                        $question->question = $examQuestion['question'];
+                        $question->question_text_two = $examQuestion['question_text_2'];
+                        $question->question_type = $examQuestion['question_type'];
+
+                        if($examQuestion['question_type'] == 'mc'){
+                            $question->option_one = $examQuestion['option1'];
+                            $question->option_two = $examQuestion['option2'];
+                            $question->option_three = $examQuestion['option3'];
+                            $question->options_four = $examQuestion['option4'];
+                            $question->correct_option = $examQuestion['correct_option'];
+                            $question->explanation = $examQuestion['mc_explanation_text'];
+                        }
+
+                        if($examQuestion['question_type'] == 'sa'){
+                            $question->short_answer_one = $examQuestion['sa_answer_1'];
+                            $question->short_answer_two = $examQuestion['sa_answer_2'];
+                            $question->explanation = $examQuestion['sa_explanation_text'];
+                        }
+
+                        if (isset($bg['question_image_1']) && count((array)$bg['question_image_1'])) {
+                            $questionImageOne = $bg['question_image_1'];
+                            $questionImageOneNameWithExt = $questionImageOne->getClientOriginalName();
+                            list($questionImageOne_width,$questionImageOne_height)=getimagesize($questionImageOne);
+                            // Get file path
+                            $originalName = pathinfo($questionImageOneNameWithExt, PATHINFO_FILENAME);
+                            $questionImageOneName = pathinfo($questionImageOneNameWithExt, PATHINFO_FILENAME);
+                            // Remove unwanted characters
+                            $questionImageOneName = preg_replace("/[^A-Za-z0-9 ]/", '', $questionImageOneName);
+                            $questionImageOneName = preg_replace("/\s+/", '-', $questionImageOneName);
+
+                            // Get the original image extension
+                            $extension = $questionImageOne->getClientOriginalExtension();
+                            if($extension != 'jpg' && $extension != 'jpeg' && $extension != 'png'){
+                                return redirect('exams/create')->with('error', trans('messages.INVALID_IMAGE'));
+                            }
+                            $questionImageOneName = 'bgimg_'.$questionImageOneName.'_'.time().'.'.$extension;
+                            
+                            $destinationPath = public_path('uploads/questions');
+                            if($questionImageOne_width > 800){
+                                $questionImageOne_canvas = Image::canvas(800, 800);
+                                $questionImageOne_image = Image::make($questionImageOne->getRealPath())->resize(800, 800, function ($constraint) {
+                                    $constraint->aspectRatio();
+                                    $constraint->upsize();
+                                });
+                                $questionImageOne_canvas->insert($questionImageOne_image, 'center');
+                                $questionImageOne_canvas->save($destinationPath.'/'.$questionImageOneName,80);
+                            }else{
+                                $questionImageOne->move($destinationPath, $questionImageOneName);
+                            }
+                            $questionImageOne_file = public_path('uploads/questions/'. $questionImageOneName);
+
+                            $question->question_image_one = $questionImageOneNameWithExt;
+                        }
+
+                        if (isset($bg['question_image_2']) && count((array)$bg['question_image_2'])) {
+                            $questionImageTwo = $bg['question_image_2'];
+                            $questionImageTwoNameWithExt = $questionImageTwo->getClientOriginalName();
+                            list($questionImageTwo_width,$questionImageTwo_height)=getimagesize($questionImageTwo);
+                            // Get file path
+                            $originalName = pathinfo($questionImageTwoNameWithExt, PATHINFO_FILENAME);
+                            $questionImageTwoName = pathinfo($questionImageTwoNameWithExt, PATHINFO_FILENAME);
+                            // Remove unwanted characters
+                            $questionImageTwoName = preg_replace("/[^A-Za-z0-9 ]/", '', $questionImageTwoName);
+                            $questionImageTwoName = preg_replace("/\s+/", '-', $questionImageTwoName);
+
+                            // Get the original image extension
+                            $extension = $questionImageTwo->getClientOriginalExtension();
+                            if($extension != 'jpg' && $extension != 'jpeg' && $extension != 'png'){
+                                return redirect('exams/create')->with('error', trans('messages.INVALID_IMAGE'));
+                            }
+                            $questionImageTwoName = 'bgimg_'.$questionImageTwoName.'_'.time().'.'.$extension;
+                            
+                            $destinationPath = public_path('uploads/questions');
+                            if($questionImageTwo_width > 800){
+                                $questionImageTwo_canvas = Image::canvas(800, 800);
+                                $questionImageTwo_image = Image::make($questionImageTwo->getRealPath())->resize(800, 800, function ($constraint) {
+                                    $constraint->aspectRatio();
+                                    $constraint->upsize();
+                                });
+                                $questionImageTwo_canvas->insert($questionImageTwo_image, 'center');
+                                $questionImageTwo_canvas->save($destinationPath.'/'.$questionImageTwoName,80);
+                            }else{
+                                $questionImageTwo->move($destinationPath, $questionImageTwoName);
+                            }
+                            $questionImageTwo_file = public_path('uploads/questions/'. $questionImageTwoName);
+
+                            $question->question_image_two = $questionImageTwoNameWithExt;
+                        }
+
+                        $question->save();
+                        
+                    }
+                }
+
+                DB::commit();
+            }
+
+            return redirect('exams')->with('message', 'Exam created successfully');
+
+        } catch (\Exception $e) {
+            return redirect('exams/create')->with('error', 'Exception- '.$e->getMessage());
+
+        }
     }
 
-    public function add(Request $request)
+    public function createTestNumber()
     {
-        try {
-            $authUser = \Auth::user();
-            
-
-            $subjects = Subject::where('status','active')->orderBy('name','asc')->get();
-            $grades = Grade::where('status','active')->orderBy('name','asc')->get();
-            $states = State::where('status','active')->orderBy('name','asc')->get();
-            
-
-            return view('exams::bkcreate',[
-                'subjects' => $subjects,
-                'grades' => $grades,
-                'states' => $states,
-            ]);
-
-        } catch (Exception $e) {
-            return redirect('user')->with('error', $exception->getMessage());           
+        // Get the last created order
+        $lastExam = Exam::orderBy('id', 'desc')->first();
+        $number = 0;
+        if ($lastExam) {
+            $number = substr($lastExam->test_number, 5);
         }
+        return 'EXAM-' . sprintf('%06d', intval($number) + 1);
     }
 
     public function getTopicBySubject($subject_id)

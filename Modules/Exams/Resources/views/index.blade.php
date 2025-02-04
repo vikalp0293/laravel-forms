@@ -10,7 +10,7 @@
         <div class="nk-block-between">
             <div class="nk-block-head-content">
                 <h3 class="nk-block-title page-title">Exams</h3>
-                <p>You have total <span class="record_count">{{ $usersCount }}</span> users.</p>
+                <p>You have total <span class="record_count">{{ $usersCount }}</span> exams.</p>
             </div><!-- .nk-block-head-content -->
             <div class="nk-block-head-content">
                 <div class="toggle-wrap nk-block-tools-toggle">
@@ -61,9 +61,14 @@
                                 <input type="checkbox" class="custom-control-input" id="check-all" name="check_all"><label class="custom-control-label" for="check-all"></label>
                             </div>
                         </th>
-                        <th class="nk-tb-col"><span class="sub-text">Email</span></th>
+                        <th class="nk-tb-col"><span class="sub-text">Test Number</span></th>
+                        <th class="nk-tb-col"><span class="sub-text">Title</span></th>
                         <th class="nk-tb-col"><span class="sub-text">Subject</span></th>
+                        <th class="nk-tb-col"><span class="sub-text">Topic</span></th>
+                        <th class="nk-tb-col"><span class="sub-text">Sub-Topic</span></th>
+                        <th class="nk-tb-col"><span class="sub-text">State</span></th>
                         <th class="nk-tb-col"><span class="sub-text">Grade</span></th>
+                        <th class="nk-tb-col"><span class="sub-text">Questions</span></th>
                         <th class="nk-tb-col w-1 text-center" nowrap="true"><span class="sub-text">Status</span></th>
                         <th class="nk-tb-col w-1" nowrap="true"><span class="sub-text">Created At</span></th>
                         <th class="nk-tb-col nk-tb-col-tools text-right w-1" nowrap="true">
@@ -343,8 +348,13 @@
                     
                     {
                         "class": "nk-tb-col ",
-                        data: 'email',
-                        name: 'email'
+                        data: 'test_number',
+                        name: 'test_number'
+                    },
+                    {
+                        "class": "nk-tb-col ",
+                        data: 'title',
+                        name: 'title'
                     },
                     {
                         "class": "nk-tb-col ",
@@ -353,8 +363,28 @@
                     },
                     {
                         "class": "nk-tb-col ",
+                        data: 'topic',
+                        name: 'topic'
+                    },
+                    {
+                        "class": "nk-tb-col ",
+                        data: 'subtopic',
+                        name: 'subtopic'
+                    },
+                    {
+                        "class": "nk-tb-col ",
+                        data: 'state',
+                        name: 'state'
+                    },
+                    {
+                        "class": "nk-tb-col ",
                         data: 'grade',
                         name: 'grade'
+                    },
+                    {
+                        "class": "nk-tb-col ",
+                        data: 'total_questions',
+                        name: 'total_questions'
                     },
                     {
                         "class": "nk-tb-col  text-center",
