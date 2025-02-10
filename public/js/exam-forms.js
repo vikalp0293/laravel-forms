@@ -352,7 +352,14 @@ function questionFileds(newQuestionCount){
     return fieldHTML;
 }
 
-
+$(document).ready(function() {
+    $('.section-box').each(function() {
+        var section = $(this);
+        if(section.find('input.background').is(':checked')) {
+            section.find('.addQuestionSameBackground').css('display', 'block');    
+        }        
+    });
+})
 
 // Add more questions code goes here
 $(document).on('click', '.addQuestionSameBackground', function(){ 
