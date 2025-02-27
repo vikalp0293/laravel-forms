@@ -15,7 +15,7 @@ $userPermission = \Session::get('userPermission');
 
     <form role="form" method="post" enctype="multipart/form-data">
         @csrf
-        @method('PUT')
+        <input type="hidden" id="uuid" name="uuid" value="{{ $exam->uuid }}">
         <input type="hidden" name="maxQuestions" id="maxQuestions" value="{{ $maxQuestions }}">
         <div class="nk-block">
             <div class="card card-bordered sp-plan">
@@ -173,6 +173,9 @@ $userPermission = \Session::get('userPermission');
                                         </div>
 
                                         @if (!empty($section['background']))
+
+                                            <input type="hidden" name="backgrounds[{{ $index + 1 }}][id]" value="{{ $section['background']['id'] }}">
+
                                             <div class="background_section_{{ $index + 1 }}" style="display: block;">
                                                 <div class="row g-3 align-center">
                                                     <div class="col-lg-3">
@@ -208,6 +211,21 @@ $userPermission = \Session::get('userPermission');
                                                                     <label class="custom-file-label" for="image_upload_1">Choose file</label>
                                                                     <span class="error-message" style="color: red; display: none;">Invalid file type or size exceeds 2MB</span>
                                                                 </div>
+                                                                @if(isset($section['background']['image_one']) && !is_null($section['background']['image_one']))
+                                                                <div class="media_box imageone_box_background_{{ $section['background']['id'] }}">
+                                                                    <img height="100" width="100" src="{{url('uploads/questions/backgrounds/'.$section['background']['image_one'])}}">
+                                                                    <a 
+                                                                    href="javascript:void(0);" 
+                                                                    data-id="{{ $section['background']['id'] }}" 
+                                                                    data-type="background"
+                                                                    data-name="image_one"
+                                                                    data-box="imageone_box_background_{{ $section['background']['id'] }}"
+                                                                    
+                                                                    class="removeImage">
+                                                                        <i class="fa fa-trash"></i> Remove
+                                                                    </a>
+                                                                </div>
+                                                                @endif
                                                             </div>
                                                         </div>
                                                     </div>
@@ -237,6 +255,22 @@ $userPermission = \Session::get('userPermission');
                                                                     <span class="error-message" style="color: red; display: none;">Invalid file type or size exceeds 2MB</span>
                                                                 </div>
                                                             </div>
+                                                            @if(isset($section['background']['image_two']) && !is_null($section['background']['image_two']))
+                                                            <div class="media_box imagetwo_box_background_{{ $section['background']['id'] }}">
+                                                                <img height="100" width="100" src="{{url('uploads/questions/backgrounds/'.$section['background']['image_two'])}}">
+                                                                <a 
+                                                                href="javascript:void(0);" 
+                                                                data-id="{{ $section['background']['id'] }}" 
+                                                                data-type="background"
+                                                                data-name="image_two"
+                                                                data-box="imagetwo_box_background_{{ $section['background']['id'] }}"
+                                                                
+                                                                class="removeImage"
+                                                                >
+                                                                    <i class="fa fa-trash"></i> Remove
+                                                                </a>
+                                                            </div>
+                                                            @endif
                                                         </div>
                                                     </div>
                                                 </div>
@@ -246,9 +280,12 @@ $userPermission = \Session::get('userPermission');
 
                                         <div class="question-block-{{ $index + 1 }}">
                                             @foreach ($section['questions'] as $questionIndex => $question)
-                                                <div class="question-box question-wrapper-{{ $questionIndex + 1 }}">
-                                                    <h6 class="text-center mt-3"> Question {{ $questionIndex + 1 }}</h6>
-                                                    <input type="hidden" name="questions[{{ $questionIndex + 1 }}][background]" class="question" value="{{ $question['background_number'] }}">
+
+                                                <input type="hidden" name="questions[{{ $question['id'] }}][id]" value="{{ $question['id'] }}">
+
+                                                <div class="question-box question-wrapper-{{ $question['id'] }}">
+                                                    <h6 class="text-center mt-3"> Question {{ $question['id'] }}</h6>
+                                                    <input type="hidden" name="questions[{{ $question['id'] }}][background]" class="question" value="{{ $question['background_number'] }}">
                                                     <div class="row g-3 align-center">
                                                         <div class="col-lg-3">
                                                             <div class="form-group">
@@ -256,7 +293,7 @@ $userPermission = \Session::get('userPermission');
                                                             </div>
                                                         </div>
                                                         <div class="col-lg-9">
-                                                            <textarea required data-parsley-errors-container=".parsley-container-question" id="question" name="questions[{{ $questionIndex + 1 }}][question]" class="form-control" autocomplete="off">{{ $question['question'] }}</textarea>
+                                                            <textarea required data-parsley-errors-container=".parsley-container-question" id="question" name="questions[{{ $question['id'] }}][question]" class="form-control" autocomplete="off">{{ $question['question'] }}</textarea>
                                                         </div>
                                                     </div>
 
@@ -268,11 +305,25 @@ $userPermission = \Session::get('userPermission');
                                                             <div class="form-group">
                                                                 <div class="form-control-wrap">
                                                                     <div class="custom-file">
-                                                                        <input type="file" class="custom-file-input" id="question_image_1" name="questions[{{ $questionIndex + 1 }}][question_image_1]" accept=".png, .jpg, .jpeg" >
+                                                                        <input type="file" class="custom-file-input" id="question_image_1" name="questions[{{ $question['id'] }}][question_image_1]" accept=".png, .jpg, .jpeg" >
                                                                         <label class="custom-file-label" for="question_image_1">Choose file</label>
                                                                         <span class="error-message" style="color: red; display: none;">Invalid file type or size exceeds 2MB</span>
                                                                     </div>
                                                                 </div>
+                                                                @if(isset($question['question_image_one']) && !is_null($question['question_image_one']))
+                                                                <div class="media_box questionimageone_box_{{ $question['id'] }}">
+                                                                    <img height="100" width="100" src="{{url('uploads/questions/'.$question['question_image_one'])}}">
+                                                                    <a href="javascript:void(0);" 
+                                                                    data-id="{{ $question['id'] }}" 
+                                                                    data-type="question"
+                                                                    data-name="question_image_1"
+                                                                    data-box="questionimageone_box_{{ $question['id'] }}"
+                                                                    
+                                                                    class="removeImage">
+                                                                        <i class="fa fa-trash"></i> Remove
+                                                                    </a>
+                                                                </div>
+                                                                @endif
                                                             </div>
                                                         </div>
                                                     </div>
@@ -284,7 +335,7 @@ $userPermission = \Session::get('userPermission');
                                                             </div>
                                                         </div>
                                                         <div class="col-lg-9">
-                                                            <textarea data-parsley-errors-container=".parsley-container-question_text_2" id="question_text_2" name="questions[{{ $questionIndex + 1 }}][question_text_2]" class="form-control" autocomplete="off">{{ $question['question_text_two'] }}</textarea>
+                                                            <textarea data-parsley-errors-container=".parsley-container-question_text_2" id="question_text_2" name="questions[{{ $question['id'] }}][question_text_2]" class="form-control" autocomplete="off">{{ $question['question_text_two'] }}</textarea>
                                                         </div>
                                                     </div>
 
@@ -296,10 +347,43 @@ $userPermission = \Session::get('userPermission');
                                                             <div class="form-group">
                                                                 <div class="form-control-wrap">
                                                                     <div class="custom-file">
-                                                                        <input type="file" class="custom-file-input" id="question_image_2" name="questions[{{ $questionIndex + 1 }}][question_image_2]" accept=".png, .jpg, .jpeg" >
+                                                                        <input type="file" class="custom-file-input" id="question_image_2" name="questions[{{ $question['id'] }}][question_image_2]" accept=".png, .jpg, .jpeg" >
                                                                         <label class="custom-file-label" for="question_image_2">Choose file</label>
                                                                         <span class="error-message" style="color: red; display: none;">Invalid file type or size exceeds 2MB</span>
                                                                     </div>
+                                                                </div>
+                                                                @if(isset($question['question_image_two']) && !is_null($question['question_image_two']))
+                                                                <div class="media_box questionimagetwo_box_{{ $question['id'] }}">
+                                                                    <img height="100" width="100" src="{{url('uploads/questions/'.$question['question_image_two'])}}">
+                                                                    <a href="javascript:void(0);" 
+                                                                    data-id="{{ $question['id'] }}" 
+                                                                    data-type="question"
+                                                                    data-name="question_image_2"
+                                                                    data-box="questionimagetwo_box_{{ $question['id'] }}"
+                                                                    
+                                                                    class="removeImage">
+                                                                        <i class="fa fa-trash"></i> Remove
+                                                                    </a>
+                                                                </div>
+
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row g-3 align-center">
+                                                        <div class="col-lg-3">
+                                                            <label class="form-label" for="default-06">Standard</label>
+                                                        </div>
+                                                        <div class="col-lg-9">
+                                                            <div class="form-group">
+                                                                <div class="form-control-wrap">
+                                                                    <select size="sm" class="form-select form-control form-control-lg standards" data-placeholder="Select Standard" data-parsley-errors-container=".gradeParsley" name="questions[{{ $question['id'] }}][standard]" id="standard_{{$question['id']}}" data-search='on' > 
+                                                                        <option value="">Select standard</option>
+                                                                        @foreach ($standards as $standard)
+                                                                        <option value="{{ $standard->id }}" {{ $question['standard'] == $standard->id ? 'selected' : '' }}>{{ $standard->name }}</option>
+                                                                        @endforeach
+                                                                    </select>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -313,26 +397,26 @@ $userPermission = \Session::get('userPermission');
                                                             <div class="form-group">
                                                                 <div class="form-control-wrap">
                                                                     <div class="custom-control custom-control-xs custom-radio">
-                                                                        <input type="radio" name="questions[{{ $questionIndex + 1 }}][question_type]" data-question="{{ $questionIndex + 1 }}" id="question_type_mc_{{ $questionIndex + 1 }}" class="custom-control-input radio-btn question-choice" value="mc" {{ $question['question_type'] == 'mc' ? 'checked' : '' }}>
-                                                                        <label class="custom-control-label" for="question_type_mc_{{ $questionIndex + 1 }}">Make it MC</label>
+                                                                        <input type="radio" name="questions[{{ $question['id'] }}][question_type]" data-question="{{ $question['id'] }}" id="question_type_mc_{{ $question['id'] }}" class="custom-control-input radio-btn question-choice" value="mc" {{ $question['question_type'] == 'mc' ? 'checked' : '' }}>
+                                                                        <label class="custom-control-label" for="question_type_mc_{{ $question['id'] }}">Make it MC</label>
                                                                     </div>
 
                                                                     <div class="custom-control custom-control-xs custom-radio">
-                                                                        <input type="radio" name="questions[{{ $questionIndex + 1 }}][question_type]" data-question="{{ $questionIndex + 1 }}" id="question_type_sa_{{ $questionIndex + 1 }}" class="custom-control-input radio-btn question-choice" value="sa" {{ $question['question_type'] == 'sa' ? 'checked' : '' }}>
-                                                                        <label class="custom-control-label" for="question_type_sa_{{ $questionIndex + 1 }}">Make it Short answer</label>
+                                                                        <input type="radio" name="questions[{{ $question['id'] }}][question_type]" data-question="{{ $question['id'] }}" id="question_type_sa_{{ $question['id'] }}" class="custom-control-input radio-btn question-choice" value="sa" {{ $question['question_type'] == 'sa' ? 'checked' : '' }}>
+                                                                        <label class="custom-control-label" for="question_type_sa_{{ $question['id'] }}">Make it Short answer</label>
                                                                     </div>
 
-                                                                    <div class="custom-control custom-control-xs custom-radio">
-                                                                        <input type="radio" name="questions[{{ $questionIndex + 1 }}][question_type]" data-question="{{ $questionIndex + 1 }}" id="question_type_admin_{{ $questionIndex + 1 }}" class="custom-control-input radio-btn question-choice" value="admin" {{ $question['question_type'] == 'admin' ? 'checked' : '' }}>
-                                                                        <label class="custom-control-label" for="question_type_admin_{{ $questionIndex + 1 }}">Admin Only</label>
-                                                                    </div>
+                                                                    <!-- <div class="custom-control custom-control-xs custom-radio">
+                                                                        <input type="radio" name="questions[{{ $question['id'] }}][question_type]" data-question="{{ $question['id'] }}" id="question_type_admin_{{ $question['id'] }}" class="custom-control-input radio-btn question-choice" value="admin" {{ $question['question_type'] == 'admin' ? 'checked' : '' }}>
+                                                                        <label class="custom-control-label" for="question_type_admin_{{ $question['id'] }}">Admin Only</label>
+                                                                    </div> -->
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
 
                                                     @if ($question['question_type'] == 'mc')
-                                                        <div class="mc_section_{{ $questionIndex + 1 }}" style="display: block;">
+                                                        <div class="mc_section_{{ $question['id'] }}" style="display: block;">
                                                             <div class="row g-3 align-center">
                                                                 <div class="col-lg-3">
                                                                     <x-inputs.verticalFormLabel label="MC Options" for="default-112" />
@@ -347,30 +431,30 @@ $userPermission = \Session::get('userPermission');
                                                                             <td></td>
                                                                             <td style="width:80%">
                                                                                 <div class="custom-radio">
-                                                                                    <input type="radio" name="questions[{{ $questionIndex + 1 }}][correct_option]" id="option_radio_1_{{ $questionIndex + 1 }}" class="custom-control-input radio-btn mc_options_{{ $questionIndex + 1 }}" value="1" {{ $question['correct_option'] == 1 ? 'checked' : '' }}>
-                                                                                    <label class="custom-control-label col-lg-9" for="option_radio_1_{{ $questionIndex + 1 }}">
-                                                                                        <input type="text" name="questions[{{ $questionIndex + 1 }}][option1]" placeholder="Option 1" class="form-control mc_options_{{ $questionIndex + 1 }}" value="{{ $question['option_one'] }}" required>
+                                                                                    <input type="radio" name="questions[{{ $question['id'] }}][correct_option]" id="option_radio_1_{{ $question['id'] }}" class="custom-control-input radio-btn mc_options_{{ $question['id'] }}" value="1" {{ $question['correct_option'] == 1 ? 'checked' : '' }}>
+                                                                                    <label class="custom-control-label col-lg-9" for="option_radio_1_{{ $question['id'] }}">
+                                                                                        <input type="text" name="questions[{{ $question['id'] }}][option1]" placeholder="Option 1" class="form-control mc_options_{{ $question['id'] }}" value="{{ $question['option_one'] }}" required>
                                                                                     </label>
                                                                                 </div>
                                                                                 <br><br>
                                                                                 <div class="custom-radio">
-                                                                                    <input type="radio" name="questions[{{ $questionIndex + 1 }}][correct_option]" id="option_radio_2_{{ $questionIndex + 1 }}" class="custom-control-input radio-btn mc_options_{{ $questionIndex + 1 }}" value="2" {{ $question['correct_option'] == 2 ? 'checked' : '' }}>
-                                                                                    <label class="custom-control-label col-lg-9" for="option_radio_2_{{ $questionIndex + 1 }}">
-                                                                                        <input type="text" name="questions[{{ $questionIndex + 1 }}][option2]" placeholder="Option 2" class="form-control mc_options_{{ $questionIndex + 1 }}" value="{{ $question['option_two'] }}" required>
+                                                                                    <input type="radio" name="questions[{{ $question['id'] }}][correct_option]" id="option_radio_2_{{ $question['id'] }}" class="custom-control-input radio-btn mc_options_{{ $question['id'] }}" value="2" {{ $question['correct_option'] == 2 ? 'checked' : '' }}>
+                                                                                    <label class="custom-control-label col-lg-9" for="option_radio_2_{{ $question['id'] }}">
+                                                                                        <input type="text" name="questions[{{ $question['id'] }}][option2]" placeholder="Option 2" class="form-control mc_options_{{ $question['id'] }}" value="{{ $question['option_two'] }}" required>
                                                                                     </label>
                                                                                 </div>
                                                                                 <br><br>
                                                                                 <div class="custom-radio">
-                                                                                    <input type="radio" name="questions[{{ $questionIndex + 1 }}][correct_option]" id="option_radio_3_{{ $questionIndex + 1 }}" class="custom-control-input radio-btn mc_options_{{ $questionIndex + 1 }}" value="3" {{ $question['correct_option'] == 3 ? 'checked' : '' }}>
-                                                                                    <label class="custom-control-label col-lg-9" for="option_radio_3_{{ $questionIndex + 1 }}">
-                                                                                        <input type="text" name="questions[{{ $questionIndex + 1 }}][option3]" placeholder="Option 3" class="form-control mc_options_{{ $questionIndex + 1 }}" value="{{ $question['option_three'] }}" required>
+                                                                                    <input type="radio" name="questions[{{ $question['id'] }}][correct_option]" id="option_radio_3_{{ $question['id'] }}" class="custom-control-input radio-btn mc_options_{{ $question['id'] }}" value="3" {{ $question['correct_option'] == 3 ? 'checked' : '' }}>
+                                                                                    <label class="custom-control-label col-lg-9" for="option_radio_3_{{ $question['id'] }}">
+                                                                                        <input type="text" name="questions[{{ $question['id'] }}][option3]" placeholder="Option 3" class="form-control mc_options_{{ $question['id'] }}" value="{{ $question['option_three'] }}" required>
                                                                                     </label>
                                                                                 </div>
                                                                                 <br><br>
                                                                                 <div class="custom-radio">
-                                                                                    <input type="radio" name="questions[{{ $questionIndex + 1 }}][correct_option]" id="option_radio_4_{{ $questionIndex + 1 }}" class="custom-control-input radio-btn mc_options_{{ $questionIndex + 1 }}" value="4" {{ $question['correct_option'] == 4 ? 'checked' : '' }}>
-                                                                                    <label class="custom-control-label col-lg-9" for="option_radio_4_{{ $questionIndex + 1 }}">
-                                                                                        <input type="text" name="questions[{{ $questionIndex + 1 }}][option4]" placeholder="Option 4" class="form-control mc_options_{{ $questionIndex + 1 }}" value="{{ $question['options_four'] }}" required>
+                                                                                    <input type="radio" name="questions[{{ $question['id'] }}][correct_option]" id="option_radio_4_{{ $question['id'] }}" class="custom-control-input radio-btn mc_options_{{ $question['id'] }}" value="4" {{ $question['correct_option'] == 4 ? 'checked' : '' }}>
+                                                                                    <label class="custom-control-label col-lg-9" for="option_radio_4_{{ $question['id'] }}">
+                                                                                        <input type="text" name="questions[{{ $question['id'] }}][option4]" placeholder="Option 4" class="form-control mc_options_{{ $question['id'] }}" value="{{ $question['options_four'] }}" required>
                                                                                     </label>
                                                                                 </div>
                                                                             </td>
@@ -386,14 +470,14 @@ $userPermission = \Session::get('userPermission');
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-9">
-                                                                    <textarea data-parsley-errors-container=".parsley-container-mc_explanation_text" id="mc_explanation_text" name="questions[{{ $questionIndex + 1 }}][mc_explanation_text]" class="form-control" autocomplete="off">{{ $question['explanation'] }}</textarea>
+                                                                    <textarea data-parsley-errors-container=".parsley-container-mc_explanation_text" id="mc_explanation_text" name="questions[{{ $question['id'] }}][mc_explanation_text]" class="form-control" autocomplete="off">{{ $question['explanation'] }}</textarea>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     @endif
 
                                                     @if ($question['question_type'] == 'sa')
-                                                        <div class="sa_section_{{ $questionIndex + 1 }}" style="display: block;">
+                                                        <div class="sa_section_{{ $question['id'] }}" style="display: block;">
                                                             <div class="row g-3 align-center">
                                                                 <div class="col-lg-3">
                                                                     <div class="form-group">
@@ -401,7 +485,7 @@ $userPermission = \Session::get('userPermission');
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-9">
-                                                                    <textarea data-parsley-errors-container=".parsley-container-sa_answer_1" id="sa_answer_1" name="questions[{{ $questionIndex + 1 }}][sa_answer_1]" class="form-control" autocomplete="off">{{ $question['short_answer_one'] }}</textarea>
+                                                                    <textarea data-parsley-errors-container=".parsley-container-sa_answer_1" id="sa_answer_1" name="questions[{{ $question['id'] }}][sa_answer_1]" class="form-control" autocomplete="off">{{ $question['short_answer_one'] }}</textarea>
                                                                 </div>
                                                             </div>
 
@@ -412,7 +496,7 @@ $userPermission = \Session::get('userPermission');
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-9">
-                                                                    <textarea data-parsley-errors-container=".parsley-container-sa_answer_2" id="sa_answer_2" name="questions[{{ $questionIndex + 1 }}][sa_answer_2]" class="form-control" autocomplete="off">{{ $question['short_answer_two'] }}</textarea>
+                                                                    <textarea data-parsley-errors-container=".parsley-container-sa_answer_2" id="sa_answer_2" name="questions[{{ $question['id'] }}][sa_answer_2]" class="form-control" autocomplete="off">{{ $question['short_answer_two'] }}</textarea>
                                                                 </div>
                                                             </div>
 
@@ -423,14 +507,14 @@ $userPermission = \Session::get('userPermission');
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-9">
-                                                                    <textarea data-parsley-errors-container=".parsley-container-sa_explanation_text" id="sa_explanation_text" name="questions[{{ $questionIndex + 1 }}][sa_explanation_text]" class="form-control" autocomplete="off">{{ $question['explanation'] }}</textarea>
+                                                                    <textarea data-parsley-errors-container=".parsley-container-sa_explanation_text" id="sa_explanation_text" name="questions[{{ $question['id'] }}][sa_explanation_text]" class="form-control" autocomplete="off">{{ $question['explanation'] }}</textarea>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     @endif
 
                                                     <div class="text-right" style="margin:5px 0px 5px 0px !important;">
-                                                        <a href="javascript:void(0);" class="btn btn-danger remove_button" data-box="{{ $questionIndex + 1 }}"><em class="icon ni ni-trash"></em> Remove Question</a>
+                                                        <a href="javascript:void(0);" class="btn btn-danger remove_button" data-box="{{ $question['id'] }}"><em class="icon ni ni-trash"></em> Remove Question</a>
                                                     </div>
                                                 </div>
                                             @endforeach
@@ -453,8 +537,6 @@ $userPermission = \Session::get('userPermission');
             </div>
         </div>
 
-        <input type="" id="uuid" name="uuid" value="{{ $exam->uuid }}">
-
         <div class="nk-block">
             <div class="row">
                 <div class="col-md-12">
@@ -474,6 +556,45 @@ $userPermission = \Session::get('userPermission');
     </form>
 
     <script type="text/javascript">
+
+        
+        $(document).on('click', '.removeImage', function(){ 
+
+            if (confirm("Are you sure you want to remove this image?")) {
+                var id = $(this).data('id');
+                var type = $(this).data('type');
+                var name = $(this).data('name');
+                var box = $(this).data('box');
+
+                var root_url = "<?php echo Request::root(); ?>";
+                $.ajax({
+                    url: root_url + '/exams/remove-image/' + id + '/' + type + '/' + name,
+                    data: {},
+                    method: "GET",
+                    cache: false,
+                    success: function(data) {
+                        if(data.success){
+
+                            $('.'+box).remove();
+
+                            Swal.fire(
+                              'Good job!',
+                              'Image removed Successfully.',
+                              'success'
+                            )
+                        }else{
+                            Swal.fire({
+                              icon: 'error',
+                              title: 'Oops...',
+                              text: 'Something went wrong',
+                            })
+                        }
+                    }
+                });
+            }
+
+        });
+
         function getTopics(subject_id) {
             var root_url = "<?php echo Request::root(); ?>";
             $.ajax({
@@ -516,4 +637,7 @@ $userPermission = \Session::get('userPermission');
     </script>
 
     <script src="{{ url('js/exam-forms.js') }}?time={{ time() }}"></script>
+    <script type="text/javascript">
+        updateQuestionsBasedOnCheckbox();
+    </script>
 @endsection

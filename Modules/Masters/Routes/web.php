@@ -35,6 +35,14 @@ Route::prefix('masters')->middleware(CheckSuperAdmin::class)->group(function () 
         Route::post('/mass-update', 'SubTopicController@massUpdate');
     });
 
+    Route::group(['prefix' => 'standard'], function () {
+        Route::get('/', 'StandardController@index');
+        Route::post('/add', 'StandardController@store');
+        Route::get('/get-standard', 'StandardController@getStandard');
+        Route::get('/delete', 'StandardController@destroy');
+        Route::post('/mass-update', 'StandardController@massUpdate');
+    });
+
     Route::group(['prefix' => 'grade'], function () {
         Route::get('/', 'GradeController@index');
         Route::post('/add', 'GradeController@store');

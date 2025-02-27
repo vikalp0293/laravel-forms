@@ -96,7 +96,7 @@ $userPermission = \Session::get('userPermission');
                                 </div>
                                 <div class="col-lg-9">
 
-                                    <select size="sm" class="form-select form-control form-control-lg" data-placeholder="Select Subtopic" data-parsley-errors-container=".subtopicParsley" name="subtopic" id="subtopic" data-search='on'  required> 
+                                    <select size="sm" class="form-select form-control form-control-lg" data-placeholder="Select Subtopic" data-parsley-errors-container=".subtopicParsley" name="subtopic" id="subtopic" data-search='on'  required onchange="getStandards(this.options[this.selectedIndex].value)"> 
                                         <option value="">Select Subtopic</option>
                                     </select>
                                     @if ($errors->has('subtopic'))
@@ -178,6 +178,40 @@ $userPermission = \Session::get('userPermission');
             </div>
         </div><!-- .nk-block -->
         
+        <div class="nk-block">
+            <div class="card card-bordered sp-plan">
+                <div class="row no-gutters">
+                    <div class="col-md-12">
+                        <div class="sp-plan-info card-inner">
+                            <div class="row g-3 align-center">
+                                <div class="col-lg-3">
+                                    <x-inputs.verticalFormLabel label="Search Questions" for="search" suggestion="Search questions from existing exams." />
+                                </div>
+                                <div class="col-lg-8">
+                                    <input type="text" data-parsley-errors-container=".parsley-container-search" id="search" value="" name="search" placeholder="Search questions from existing exams" class="form-control" autocomplete="off">
+
+                                    
+                                </div>
+                                <div class="col-lg-1">
+                                    <a 
+                                    href="javascript:void(0);"
+                                    class="btn btn-info searchBtn" 
+                                    >
+                                        <em class="icon ni ni-search"></em>
+                                    </a>
+                                </div>
+                                
+                            </div>
+                            <div  id="questionRows"></div>
+                            <a style="display: none;" href="javascript:void(0);" class="btn btn-dark addSearchQuestionBtn"><em class="icon ni ni-plus"></em> Add Question</a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         <div class="nk-block">
             <div class="card card-bordered sp-plan">
                 <div class="row no-gutters">
@@ -333,6 +367,21 @@ $userPermission = \Session::get('userPermission');
 
                                             <div class="row g-3 align-center">
                                                 <div class="col-lg-3">
+                                                    <label class="form-label" for="default-06">Standard</label>
+                                                </div>
+                                                <div class="col-lg-9">
+                                                    <div class="form-group">
+                                                        <div class="form-control-wrap">
+                                                            <select size="sm" class="form-select form-control form-control-lg standards" data-placeholder="Select Standard" data-parsley-errors-container=".gradeParsley" name="questions[1][standard]" id="standard_1" data-search='on' > 
+                                                                <option value="">Select standard</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row g-3 align-center">
+                                                <div class="col-lg-3">
                                                     <x-inputs.verticalFormLabel label="Question Type" for="default-06"/>
                                                 </div>
                                                 <div class="col-lg-9">
@@ -349,10 +398,10 @@ $userPermission = \Session::get('userPermission');
                                                                 <label class="custom-control-label"  for="question_type_sa_1">Make it Short answer</label>
                                                             </div>
 
-                                                            <div class="custom-control custom-control-xs custom-radio">
+                                                            <!-- <div class="custom-control custom-control-xs custom-radio">
                                                                 <input type="radio" name="questions[1][question_type]" data-question="1" id="question_type_admin_1" class="custom-control-input radio-btn question-choice" value="admin">
                                                                 <label class="custom-control-label"  for="question_type_admin_1">Admin Only</label>
-                                                            </div>
+                                                            </div> -->
 
                                                         </div>
                                                     </div>
@@ -499,8 +548,11 @@ $userPermission = \Session::get('userPermission');
 
 
     <script type="text/javascript">
+
+        var root_url = "<?php echo Request::root(); ?>";
+
         function getTopics(subject_id) {
-            var root_url = "<?php echo Request::root(); ?>";
+            // var root_url = "<?php echo Request::root(); ?>";
             //var subject_id = $(".subject_id").val();
             $.ajax({
                 url: root_url + '/exams/get-topics-by-subject/' + subject_id,
@@ -522,7 +574,7 @@ $userPermission = \Session::get('userPermission');
         }
 
         function getSubTopics(topic_id) {
-            var root_url = "<?php echo Request::root(); ?>";
+            // var root_url = "<?php echo Request::root(); ?>";
             //var topic_id = $(".topic_id").val();
             $.ajax({
                 url: root_url + '/exams/get-subtopics-by-topic/' + topic_id,
@@ -537,6 +589,28 @@ $userPermission = \Session::get('userPermission');
                     $.each(response.subtopics, function(key, value) {
                         if (value.id != 0) {
                             $("#subtopic").append($('<option></option>').val(value.id).html(value.name));
+                        }
+                    });
+                }
+            });
+        }
+
+        function getStandards(sub_topic_id) {
+            // var root_url = "<?php echo Request::root(); ?>";
+            //var sub_topic_id = $(".sub_topic_id").val();
+            $.ajax({
+                url: root_url + '/exams/get-standards-by-subtopic/' + sub_topic_id,
+                data: {},
+                //dataType: "html",
+                method: "GET",
+                cache: false,
+                success: function(response) {
+                    $(".standards").html('');
+                    $(".standards").append($('<option value="" selected disabled></option>').val('').html('Select Standard'));
+
+                    $.each(response.standards, function(key, value) {
+                        if (value.id != 0) {
+                            $(".standards").append($('<option></option>').val(value.id).html(value.name));
                         }
                     });
                 }

@@ -66,6 +66,10 @@ $userRole = $userRole[0];
                             </li>
 
                             <li class="nk-menu-item">
+                                <a href="{{url('masters/standard')}}" class="nk-menu-link"><span class="nk-menu-text">Standards</span></a>
+                            </li>
+
+                            <li class="nk-menu-item">
                                 <a href="{{url('/masters/country')}}" class="nk-menu-link"><span class="nk-menu-text">Countries</span></a>
                             </li>
 
