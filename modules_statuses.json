@@ -3,5 +3,6 @@
     "Exams": true,
     "Masters": true,
     "User": true,
-    "Administration": true
+    "Administration": true,
+    "Stats": true
 }

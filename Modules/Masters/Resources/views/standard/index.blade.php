@@ -63,7 +63,7 @@
                             </div>
                         </th>
                         <th class="nk-tb-col"><span class="sub-text">Name</span></th>
-                        <th class="nk-tb-col"><span class="sub-text">Sub Topic</span></th>
+                        <th class="nk-tb-col"><span class="sub-text">Topic</span></th>
                         <th class="nk-tb-col nk-tb-action-col text-center" nowrap="true"><span class="sub-text">Status</span></th>
                         <th class="nk-tb-col nk-tb-action-col" nowrap="true"><span class="sub-text">Created at</span></th>
                         <th class="nk-tb-col nk-tb-action-col" nowrap="true"><span class="sub-text">Updated at</span></th>
@@ -93,9 +93,9 @@
                 <div class="row g-3">
 
                     <div class="col-mb-12">
-                        <label class="form-label" for="site-name">Sub Topic<span class="text-danger">*</span></span></label>
-                        <select size="sm" class="form-select form-control form-control-lg" data-placeholder="Sub-Topic" data-parsley-errors-container=".categoryParsley" name="sub_topic_id" id="parentCat" data-search='on' required> 
-                            <option value="" selected disabled>Select Sub-Topic</option>
+                        <label class="form-label" for="site-name">Topic<span class="text-danger">*</span></span></label>
+                        <select size="sm" class="form-select form-control form-control-lg" data-placeholder="Topic" data-parsley-errors-container=".categoryParsley" name="sub_topic_id" id="parentCat" data-search='on' required> 
+                            <option value="" selected disabled>Select Topic</option>
                             @forelse($topics as $key => $topic)
                             <option value="{{ $topic->id }}">{{ $topic->name }}</option>
                             @empty

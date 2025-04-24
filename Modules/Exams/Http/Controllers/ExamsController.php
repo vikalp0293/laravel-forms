@@ -52,16 +52,25 @@ class ExamsController extends Controller
         $authUser = \Auth::user();
 
         $role = $authUser->getRoleNames()->toArray();
+        $role = $role[0];
 
-        $data = Exam::from('exams as e')
-                 ->select('e.id','e.uuid','e.test_number','e.title','e.total_questions','e.created_at','e.status','ms.name as subject','mt.name as topic','mst.name as subtopic','st.name as state','g.name as grade')
+        $query = Exam::from('exams as e')
+                 ->select('e.id','e.uuid','e.test_number','e.title','e.total_questions','e.created_at','e.status','e.created_by','ms.name as subject','mt.name as topic','mst.name as subtopic','st.name as state','g.name as grade',
+                )
                 ->leftJoin('m_subjects as ms','ms.id','=','e.subject')
                 ->leftJoin('m_topics as mt','mt.id','=','e.topic')
                 ->leftJoin('m_sub_topics as mst','mst.id','=','e.subtopic')
                 ->leftJoin('m_states as st','st.id','=','e.state')
                 ->leftJoin('m_grades as g','g.id','=','e.grade')
-                ->orderby('e.id','desc')
-                ->get();
+                ->orderby('e.id','desc');
+
+        if ($role != 'superadmin') {
+            $query->where('e.created_by', $authUser->id);
+        }
+        
+        $data = $query->get();
+
+
         $usersCount = 0;
         if(!empty($data->toArray())){
             $usersCount = count($data);
@@ -70,6 +79,20 @@ class ExamsController extends Controller
         if ($request->ajax()) {
             return Datatables::of($data)
                     ->addIndexColumn()
+                    ->addColumn('test_number', function($row) {
+                            $detailLink = url('/').'/exams/edit/'.$row->uuid;
+                            
+                            $test_number = '
+                                        <a href="'.$detailLink.'">
+                                            <div class="user-card">
+                                                <div class="user-info">
+                                                    <span class="tb-lead">'.$row->test_number.' <span class="dot dot-success d-md-none ml-1"></span></span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    ';
+                            return $test_number;
+                    })
                     ->addColumn('title', function($row) {
                             $detailLink = url('/').'/exams/edit/'.$row->uuid;
                             
@@ -85,21 +108,24 @@ class ExamsController extends Controller
                             return $title;
                     })
                     ->addColumn('status', function ($row) {
-                        if($row->status == 'active'){
-                            $statusValue = 'Active';
-                        }else{
-                            $statusValue = 'Inactive';
+                        if ($row->status == 'published') {
+                            $statusValue = 'Published';
+                            $badgeClass = 'badge badge-success';
+                        } elseif ($row->status == 'draft') {
+                            $statusValue = 'Draft';
+                            $badgeClass = 'badge badge-secondary';
+                        } else {
+                            $statusValue = 'Unpublished';
+                            $badgeClass = 'badge badge-danger';
                         }
 
-                        $value = ($row->status == 'active') ? 'badge badge-success' : 'badge badge-danger';
-                        $status = '
+                        return '
                             <span class="tb-sub">
-                                <span class="'.$value.'">
+                                <span class="'.$badgeClass.'">
                                     '.$statusValue.'
                                 </span>
                             </span>
                         ';
-                        return $status;
                     })
                     ->addColumn('action', function($row) {
                            $edit = url('/').'/exams/edit/'.$row->uuid;
@@ -140,7 +166,7 @@ class ExamsController extends Controller
                     ->addColumn('created_at', function ($row) {
                         return date(\Config::get('constants.DATE.DATE_FORMAT') , strtotime($row->created_at));
                     })
-                    ->rawColumns(['action','created_at','title','status',])
+                    ->rawColumns(['action','created_at','title','status','test_number'])
                     ->make(true);
         }
 
@@ -176,7 +202,7 @@ class ExamsController extends Controller
     public function searchQuestions(Request $request,$searchTxt){
 
 
-        $questions = ExamQuestion::where('question', 'like', "%$searchTxt%")->get();
+        $questions = ExamQuestion::where('question', 'like', "%$searchTxt%")->where('copied_from_question',0)->get();
 
         
 
@@ -213,7 +239,10 @@ class ExamsController extends Controller
     
     public function questionDetails(Request $request,$questionId,$examId){
         $question = ExamQuestion::select('exam_questions.*','eb.id as background_id','eb.background_number', 'eb.exam_id', 'eb.instruction', 'eb.instruction_two', 'eb.image_one', 'eb.instruction_three', 'eb.image_two')
-        ->leftJoin('exam_backgrounds as eb','eb.id','=','exam_questions.background_number')
+        ->leftJoin('exam_backgrounds as eb', function($join) use ($examId) {
+            $join->on('eb.background_number','=','exam_questions.background_number')
+                ->where('eb.exam_id', '=', $examId);
+        })
         ->where('exam_questions.id',$questionId)
         ->where('exam_questions.exam_id',$examId)
         ->first();
@@ -246,6 +275,7 @@ class ExamsController extends Controller
             $exam->state  = $request->exists("state") ? $request->input("state") : "";
             $exam->grade  = $request->exists("grade") ? $request->input("grade") : "";
             $exam->total_questions  = count($questions);
+            $exam->status  = $request->exists("status") ? $request->input("status") : "";
             $exam->created_by = $user->id;
 
             if($exam->save()){
@@ -346,6 +376,15 @@ class ExamsController extends Controller
                         $question->question = $examQuestion['question'];
                         $question->question_text_two = $examQuestion['question_text_2'];
                         $question->question_type = $examQuestion['question_type'];
+
+
+                        if (isset($examQuestion['copied_from_question'])) {
+                            $question->copied_from_question = $examQuestion['copied_from_question'];
+                        }else{
+                            $question->copied_from_question = 0;
+                        }
+
+                        // $question->copied_from_question = $examQuestion['copied_from_question'];
 
                         if (isset($examQuestion['standard']) && $examQuestion['standard'] !== null) {
                             $question->standard = $examQuestion['standard'];
@@ -512,18 +551,19 @@ class ExamsController extends Controller
                 }
             }
 
-            // echo "<pre>";
-            // echo "<br>----------------------------------------------<br>";
-            // print_r($mergedData);
-            // die;
-
             $maxQuestions = env('MAX_QUESTIONS'); // Your secret key from the .env file
             $subjects = Subject::where('status','active')->orderBy('name','asc')->get();
             $grades = Grade::where('status','active')->orderBy('name','asc')->get();
             $states = State::where('status','active')->orderBy('name','asc')->get();
             $topics = Topic::where('status','active')->orderBy('name','asc')->get();
             $subtopics = Subtopic::where('status','active')->orderBy('name','asc')->get();
-            $standards = Standard::where('sub_topic_id',$exam->subtopic)->where('status','active')->orderBy('name','asc')->get();
+            $standards = Standard::where('sub_topic_id',$exam->topic)->where('status','active')->orderBy('name','asc')->get();
+
+            // echo "<pre>";
+            // echo "<br>----------------------------------------------<br>";
+            // print_r($standards->toArray());
+            // print_r($mergedData);
+            // die;
 
             return view('exams::edit',[
                 'subjects' => $subjects,
@@ -546,6 +586,7 @@ class ExamsController extends Controller
     public function update(Request $request){
         
         try {
+
             DB::beginTransaction();
             $user = Auth::user();
 
@@ -561,6 +602,7 @@ class ExamsController extends Controller
             $exam->state  = $request->exists("state") ? $request->input("state") : "";
             $exam->grade  = $request->exists("grade") ? $request->input("grade") : "";
             $exam->total_questions  = count($questions);
+            $exam->status  = $request->exists("status") ? $request->input("status") : "";
             $exam->created_by = $user->id;
 
             if($exam->save()){
@@ -660,6 +702,22 @@ class ExamsController extends Controller
                 }
 
                 if(!empty($questions)){
+
+
+                    if (isset($request->delete_question) && !empty($request->delete_question)) {
+                        // Convert delete_question string into an array
+                        $deleteQuestionIds = explode(',', $request->delete_question);
+                        $deleteQuestionIds = array_map('trim', $deleteQuestionIds); // Remove spaces
+
+                        // Ensure the array contains valid numeric IDs
+                        $deleteQuestionIds = array_filter($deleteQuestionIds, 'is_numeric');
+
+                        if (!empty($deleteQuestionIds)) {
+                            $deleteQuestion = ExamQuestion::whereIn('id', $deleteQuestionIds)->forceDelete();
+                        }
+                    }
+
+
                     foreach($request->questions as $key => $examQuestion){
                         $question = new ExamQuestion();
 
@@ -674,6 +732,7 @@ class ExamsController extends Controller
                         $question->question = $examQuestion['question'];
                         $question->question_text_two = $examQuestion['question_text_2'];
                         $question->question_type = $examQuestion['question_type'];
+                        $question->copied_from_question = $examQuestion['copied_from_question'];
 
                         if (isset($examQuestion['standard']) && $examQuestion['standard'] !== null) {
                             $question->standard = $examQuestion['standard'];
@@ -764,6 +823,25 @@ class ExamsController extends Controller
                             $question->question_image_two = $questionImageTwoName;
                         }
 
+                        if (isset($examQuestion['copied_from_question']) && $examQuestion['copied_from_question'] != 0) {
+                            $copiedQuestion = ExamQuestion::where('id', $examQuestion['copied_from_question'])->first();
+
+                            if ($copiedQuestion) {
+                                $copiedQuestionImageOne = $copiedQuestion->question_image_one;
+                                $copiedQuestionImageTwo = $copiedQuestion->question_image_two;
+
+                                // Fix incorrect condition for question_image_two
+                                if (!isset($question->question_image_one)) {
+                                    $question->question_image_one = $copiedQuestionImageOne;
+                                }
+
+                                if (!isset($question->question_image_two)) { // Fixed condition
+                                    $question->question_image_two = $copiedQuestionImageTwo;
+                                }
+                            }
+                        }
+
+
                         $question->save();
                         
                     }
@@ -793,9 +871,9 @@ class ExamsController extends Controller
         }else{
             $item = ExamQuestion::findOrfail($id);
             if($name == 'question_image_1'){
-                $item->question_image_1 = null;   
+                $item->question_image_one = null;   
             }else{
-                $item->question_image_2 = null;   
+                $item->question_image_two = null;   
             }
         }
 

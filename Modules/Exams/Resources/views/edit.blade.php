@@ -152,6 +152,40 @@ $userPermission = \Session::get('userPermission');
             </div>
         </div><!-- .nk-block -->
 
+
+        <div class="nk-block">
+            <div class="card card-bordered sp-plan">
+                <div class="row no-gutters">
+                    <div class="col-md-12">
+                        <div class="sp-plan-info card-inner">
+                            <div class="row g-3 align-center">
+                                <div class="col-lg-3">
+                                    <x-inputs.verticalFormLabel label="Search Questions" for="search" suggestion="Search questions from existing exams." />
+                                </div>
+                                <div class="col-lg-8">
+                                    <input type="text" data-parsley-errors-container=".parsley-container-search" id="search" value="" name="search" placeholder="Search questions from existing exams" class="form-control" autocomplete="off">
+
+                                    
+                                </div>
+                                <div class="col-lg-1">
+                                    <a 
+                                    href="javascript:void(0);"
+                                    class="btn btn-info searchBtn" 
+                                    >
+                                        <em class="icon ni ni-search"></em>
+                                    </a>
+                                </div>
+                                
+                            </div>
+                            <div  id="questionRows"></div>
+                            <a style="display: none;" href="javascript:void(0);" class="btn btn-dark addSearchQuestionBtn"><em class="icon ni ni-plus"></em> Add Question</a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="nk-block">
             <div class="card card-bordered sp-plan">
                 <div class="row no-gutters">
@@ -378,8 +412,8 @@ $userPermission = \Session::get('userPermission');
                                                         <div class="col-lg-9">
                                                             <div class="form-group">
                                                                 <div class="form-control-wrap">
-                                                                    <select size="sm" class="form-select form-control form-control-lg standards" data-placeholder="Select Standard" data-parsley-errors-container=".gradeParsley" name="questions[{{ $question['id'] }}][standard]" id="standard_{{$question['id']}}" data-search='on' > 
-                                                                        <option value="">Select standard</option>
+                                                                    <select size="sm" class="form-select form-control form-control-lg standards standardOptions" data-placeholder="Select Standard" data-parsley-errors-container=".gradeParsley" name="questions[{{ $question['id'] }}][standard]" id="standard_{{$question['id']}}" data-search='on' > 
+                                                                        <option value="0">Select standard</option>
                                                                         @foreach ($standards as $standard)
                                                                         <option value="{{ $standard->id }}" {{ $question['standard'] == $standard->id ? 'selected' : '' }}>{{ $standard->name }}</option>
                                                                         @endforeach
@@ -415,8 +449,14 @@ $userPermission = \Session::get('userPermission');
                                                         </div>
                                                     </div>
 
-                                                    @if ($question['question_type'] == 'mc')
-                                                        <div class="mc_section_{{ $question['id'] }}" style="display: block;">
+                                                    @php
+                                                        $showMCSection = 'display: none;';
+                                                        if ($question['question_type'] == 'mc'){
+                                                            $showMCSection = 'display: block;';
+                                                        }
+                                                    @endphp
+
+                                                        <div class="mc_section_{{ $question['id'] }}" style="{{ $showMCSection  }}">
                                                             <div class="row g-3 align-center">
                                                                 <div class="col-lg-3">
                                                                     <x-inputs.verticalFormLabel label="MC Options" for="default-112" />
@@ -474,10 +514,16 @@ $userPermission = \Session::get('userPermission');
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    @endif
+                                                    
+                                                    @php
+                                                        $showSASection = 'display: none;';
+                                                        if ($question['question_type'] == 'sa'){
+                                                            $showSASection = 'display: block;';
+                                                        }
+                                                    @endphp
 
-                                                    @if ($question['question_type'] == 'sa')
-                                                        <div class="sa_section_{{ $question['id'] }}" style="display: block;">
+                                                    
+                                                        <div class="sa_section_{{ $question['id'] }}" style="{{ $showSASection  }}">
                                                             <div class="row g-3 align-center">
                                                                 <div class="col-lg-3">
                                                                     <div class="form-group">
@@ -485,7 +531,7 @@ $userPermission = \Session::get('userPermission');
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-9">
-                                                                    <textarea data-parsley-errors-container=".parsley-container-sa_answer_1" id="sa_answer_1" name="questions[{{ $question['id'] }}][sa_answer_1]" class="form-control" autocomplete="off">{{ $question['short_answer_one'] }}</textarea>
+                                                                    <textarea data-parsley-errors-container=".parsley-container-sa_answer_1" id="sa_answer_1" name="questions[{{ $question['id'] }}][sa_answer_1]" class="form-control sa_answer_{{ $question['id'] }}" autocomplete="off">{{ $question['short_answer_one'] }}</textarea>
                                                                 </div>
                                                             </div>
 
@@ -503,18 +549,20 @@ $userPermission = \Session::get('userPermission');
                                                             <div class="row g-3 align-center">
                                                                 <div class="col-lg-3">
                                                                     <div class="form-group">
-                                                                        <label class="form-label" for="sa_explanation_text">Explanation Text<span class="text-danger">*</span></label>
+                                                                        <label class="form-label" for="sa_explanation_text">Explanation Text</label>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-9">
-                                                                    <textarea data-parsley-errors-container=".parsley-container-sa_explanation_text" id="sa_explanation_text" name="questions[{{ $question['id'] }}][sa_explanation_text]" class="form-control" autocomplete="off">{{ $question['explanation'] }}</textarea>
+                                                                    <textarea data-parsley-errors-container=".parsley-container-sa_explanation_text" id="sa_explanation_text" name="questions[{{ $question['id'] }}][sa_explanation_text]" class="form-control sa_answer_{{ $question['id'] }}" autocomplete="off">{{ $question['explanation'] }}</textarea>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    @endif
+                                                    
+
+                                                    <input type="hidden" value="{{ $question['copied_from_question'] }}" name="questions[{{ $question['id'] }}][copied_from_question]">
 
                                                     <div class="text-right" style="margin:5px 0px 5px 0px !important;">
-                                                        <a href="javascript:void(0);" class="btn btn-danger remove_button" data-box="{{ $question['id'] }}"><em class="icon ni ni-trash"></em> Remove Question</a>
+                                                        <a href="javascript:void(0);" class="btn btn-danger remove_button delete_question" data-box="{{ $question['id'] }}"><em class="icon ni ni-trash"></em> Remove Question</a>
                                                     </div>
                                                 </div>
                                             @endforeach
@@ -537,6 +585,10 @@ $userPermission = \Session::get('userPermission');
             </div>
         </div>
 
+        <input type="hidden" name="delete_question" value="" id="delete_question_input">
+
+        <input type="hidden" id="status" value="published" name="status">
+
         <div class="nk-block">
             <div class="row">
                 <div class="col-md-12">
@@ -545,7 +597,8 @@ $userPermission = \Session::get('userPermission');
                             <div class="col-lg-7 text-right offset-lg-5">
                                 <div class="form-group">
                                     <a href="javascript:history.back()" class="btn btn-outline-light">Cancel</a>
-                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                    <button type="submit" class="btn btn-secondary" onclick="setStatus(event, 'draft')">Save as Draft</button>
+                                    <button type="submit" class="btn btn-primary" onclick="setStatus(event, 'published')">Submit</button>
                                 </div>
                             </div>
                         </div>
@@ -557,6 +610,12 @@ $userPermission = \Session::get('userPermission');
 
     <script type="text/javascript">
 
+
+        function setStatus(event, status) {
+            document.getElementById("status").value = status; // Set status dynamically
+        }
+
+        var root_url = "<?php echo Request::root(); ?>";
         
         $(document).on('click', '.removeImage', function(){ 
 
@@ -629,6 +688,24 @@ $userPermission = \Session::get('userPermission');
                     $.each(response.subtopics, function(key, value) {
                         if (value.id != 0) {
                             $("#subtopic").append($('<option></option>').val(value.id).html(value.name));
+                        }
+                    });
+                }
+            });
+
+            $.ajax({
+                url: root_url + '/exams/get-standards-by-subtopic/' + topic_id,
+                data: {},
+                //dataType: "html",
+                method: "GET",
+                cache: false,
+                success: function(response) {
+                    $(".standards").html('');
+                    $(".standards").append($('<option value="0" selected>Select Standard</option>').val(0).html('Select Standard'));
+
+                    $.each(response.standards, function(key, value) {
+                        if (value.id != 0) {
+                            $(".standards").append($('<option></option>').val(value.id).html(value.name));
                         }
                     });
                 }

@@ -82,17 +82,31 @@ $userRole = $userRole[0];
                     </li>
 
                     @endif
-                    
+
+                    <li class="nk-menu-item">
+                        <a href="{{url('/exams')}}" class="nk-menu-link">
+                            <span class="nk-menu-icon"><em class="icon ni ni-users"></em></span>
+                            <span class="nk-menu-text">Exams</span>
+                        </a>
+                    </li><!-- .nk-menu-item -->
+
                     <li class="nk-menu-item has-sub">
                         <a href="#" class="nk-menu-link nk-menu-toggle">
-                            <span class="nk-menu-icon"><em class="icon ni ni-users-fill"></em></span>
-                            <span class="nk-menu-text">Exams</span>
+                            <span class="nk-menu-icon"><em class="icon ni ni-table-view"></em></span>
+                            <span class="nk-menu-text">Stats</span>
                         </a>
                         <ul class="nk-menu-sub">
                             <li class="nk-menu-item">
-                                <a href="{{url('exams')}}" class="nk-menu-link"><span class="nk-menu-text">Manage</span></a>
+                                <a href="{{url('/stats/student-results')}}" class="nk-menu-link"><span class="nk-menu-text">Student Results</span></a>
                             </li>
-                            
+
+                            <li class="nk-menu-item">
+                                <a href="{{url('/stats/test-results')}}" class="nk-menu-link"><span class="nk-menu-text">Test Results</span></a>
+                            </li>
+
+                            <li class="nk-menu-item">
+                                <a href="{{url('/stats/question-result')}}" class="nk-menu-link"><span class="nk-menu-text">Question Results</span></a>
+                            </li>
                         </ul>
                     </li>
 

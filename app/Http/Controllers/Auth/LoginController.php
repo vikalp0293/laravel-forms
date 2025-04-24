@@ -86,7 +86,7 @@ class LoginController extends Controller
             $role = $user->getRoleNames()->toArray();
             \Session::put('role', $role);
 
-            return redirect()->intended('dashboard');
+            return redirect('exams');
         } else {
             // Handle failed login attempts
             if ($user) {

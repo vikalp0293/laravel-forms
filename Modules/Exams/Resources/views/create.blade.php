@@ -10,7 +10,7 @@ $userPermission = \Session::get('userPermission');
             </div><!-- .nk-block-head-content -->
         </div><!-- .nk-block-between -->
     </div><!-- .nk-block-head -->
-    <form role="form" method="post" enctype="multipart/form-data" >
+    <form role="form" method="post" id="myForm" enctype="multipart/form-data" >
         @csrf
         <input type="hidden" name="maxQuestions" id="maxQuestions" value="{{ $maxQuestions }}">
         <div class="nk-block">
@@ -96,7 +96,8 @@ $userPermission = \Session::get('userPermission');
                                 </div>
                                 <div class="col-lg-9">
 
-                                    <select size="sm" class="form-select form-control form-control-lg" data-placeholder="Select Subtopic" data-parsley-errors-container=".subtopicParsley" name="subtopic" id="subtopic" data-search='on'  required onchange="getStandards(this.options[this.selectedIndex].value)"> 
+                                    <select size="sm" class="form-select form-control form-control-lg" data-placeholder="Select Subtopic" data-parsley-errors-container=".subtopicParsley" name="subtopic" id="subtopic" data-search='on'  required >
+                                    <!-- onchange="getStandards(this.options[this.selectedIndex].value)"  -->
                                         <option value="">Select Subtopic</option>
                                     </select>
                                     @if ($errors->has('subtopic'))
@@ -372,7 +373,7 @@ $userPermission = \Session::get('userPermission');
                                                 <div class="col-lg-9">
                                                     <div class="form-group">
                                                         <div class="form-control-wrap">
-                                                            <select size="sm" class="form-select form-control form-control-lg standards" data-placeholder="Select Standard" data-parsley-errors-container=".gradeParsley" name="questions[1][standard]" id="standard_1" data-search='on' > 
+                                                            <select size="sm" class="form-select form-control form-control-lg standards standardOptions" data-placeholder="Select Standard" data-parsley-errors-container=".gradeParsley" name="questions[1][standard]" id="standard_1" data-search='on' > 
                                                                 <option value="">Select standard</option>
                                                             </select>
                                                         </div>
@@ -498,7 +499,7 @@ $userPermission = \Session::get('userPermission');
                                                 <div class="row g-3 align-center">
                                                     <div class="col-lg-3">
                                                         <div class="form-group">
-                                                            <label class="form-label" for="sa_explanation_text">Explanation Text<span class="text-danger">*</span></label>
+                                                            <label class="form-label" for="sa_explanation_text">Explanation Text</label>
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-9">
@@ -526,7 +527,7 @@ $userPermission = \Session::get('userPermission');
             </div>
         </div>
 
-        
+        <input type="hidden" id="status" value="published" name="status">
       
         <div class="nk-block">
             <div class="row">
@@ -536,7 +537,8 @@ $userPermission = \Session::get('userPermission');
                                 <div class="col-lg-7 text-right offset-lg-5">
                                     <div class="form-group">
                                         <a href="javascript:history.back()" class="btn btn-outline-light">Cancel</a>
-                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                        <button type="submit" class="btn btn-secondary" onclick="setStatus(event, 'draft')">Save as Draft</button>
+                                        <button type="submit" class="btn btn-primary" onclick="setStatus(event, 'published')">Submit</button>
                                     </div>
                                 </div>
                             </div>
@@ -548,6 +550,10 @@ $userPermission = \Session::get('userPermission');
 
 
     <script type="text/javascript">
+
+        function setStatus(event, status) {
+            document.getElementById("status").value = status; // Set status dynamically
+        }
 
         var root_url = "<?php echo Request::root(); ?>";
 
@@ -589,6 +595,24 @@ $userPermission = \Session::get('userPermission');
                     $.each(response.subtopics, function(key, value) {
                         if (value.id != 0) {
                             $("#subtopic").append($('<option></option>').val(value.id).html(value.name));
+                        }
+                    });
+                }
+            });
+
+            $.ajax({
+                url: root_url + '/exams/get-standards-by-subtopic/' + topic_id,
+                data: {},
+                //dataType: "html",
+                method: "GET",
+                cache: false,
+                success: function(response) {
+                    $(".standards").html('');
+                    $(".standards").append($('<option value="0" selected>Select Standard</option>').val(0).html('Select Standard'));
+
+                    $.each(response.standards, function(key, value) {
+                        if (value.id != 0) {
+                            $(".standards").append($('<option></option>').val(value.id).html(value.name));
                         }
                     });
                 }

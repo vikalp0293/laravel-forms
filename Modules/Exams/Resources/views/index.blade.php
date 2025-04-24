@@ -70,6 +70,9 @@
                         <th class="nk-tb-col"><span class="sub-text">Grade</span></th>
                         <th class="nk-tb-col"><span class="sub-text">Questions</span></th>
                         <th class="nk-tb-col w-1 text-center" nowrap="true"><span class="sub-text">Status</span></th>
+                        @if($userRole == 'superadmin')
+                        <th class="nk-tb-col w-1 text-center" nowrap="true"><span class="sub-text">Created By</span></th>
+                        @endif
                         <th class="nk-tb-col w-1" nowrap="true"><span class="sub-text">Created At</span></th>
                         <th class="nk-tb-col nk-tb-col-tools text-right w-1" nowrap="true">
                             <span class="sub-text">Action</span>
@@ -309,6 +312,49 @@
         }
     }
 
+    const userRole = @json($userRole);
+
+    const columns = [
+        {
+            "class": "nk-tb-col  nk-tb-col-check",
+            data: 'DT_RowIndex',
+            name: 'DT_RowIndex',
+            orderable: false,
+            searchable: false,
+            render: function(data, type, row, meta) {
+                return '<td class="nk-tb-col nk-tb-col-check"><div class="custom-control custom-control-sm custom-checkbox notext"><input type="checkbox" class="custom-control-input cb-check" id="cb-' + row.id + '" value="' + row.id + '" name="checked_items[]"><label class="custom-control-label" for="cb-' + row.id + '"></label></div></td>';
+            }
+        },
+        { "class": "nk-tb-col", data: 'test_number', name: 'test_number' },
+        { "class": "nk-tb-col", data: 'title', name: 'title' },
+        { "class": "nk-tb-col", data: 'subject', name: 'subject' },
+        { "class": "nk-tb-col", data: 'topic', name: 'topic' },
+        { "class": "nk-tb-col", data: 'subtopic', name: 'subtopic' },
+        { "class": "nk-tb-col", data: 'state', name: 'state' },
+        { "class": "nk-tb-col", data: 'grade', name: 'grade' },
+        { "class": "nk-tb-col", data: 'total_questions', name: 'total_questions' },
+        { "class": "nk-tb-col text-center", data: 'status', name: 'status' },
+    ];
+
+    // ✅ Conditionally add created_by column if superadmin
+    if (userRole === 'superadmin') {
+        columns.push({
+            "class": "nk-tb-col",
+            data: 'created_by',
+            name: 'created_by'
+        });
+    }
+
+    columns.push(
+        { "class": "nk-tb-col", data: 'created_at', name: 'created_at' },
+        {
+            "class": "nk-tb-col text-right",
+            data: 'action',
+            name: 'action',
+            orderable: false,
+            searchable: false
+        }
+    );
 
     $(function() {
 
@@ -317,6 +363,7 @@
         var root_url = "<?php echo url('/'); ?>";
 
         var logUrl = root_url + '/user/logs';
+        var loginUrl = root_url + '/login';
         NioApp.getAuditLogs('.broadcast-init','.audit_logs','resourceid',logUrl,'#modalLogs');
 
         var items = [
@@ -334,76 +381,13 @@
                 ajax: {
                     type:"GET",
                     url: "{{ url('exams') }}",
-                },
-                columns: [{
-                        "class": "nk-tb-col  nk-tb-col-check",
-                        data: 'DT_RowIndex',
-                        name: 'DT_RowIndex',
-                        orderable: false,
-                        searchable: false,
-                        render: function(data, type, row, meta) {
-                            return '<td class="nk-tb-col nk-tb-col-check"><div class="custom-control custom-control-sm custom-checkbox notext"><input type="checkbox" class="custom-control-input cb-check" id="cb-' + row.id + '" value="' + row.id + '" name="checked_items[]"><label class="custom-control-label" for="cb-' + row.id + '"></label></div></td>'
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        if (jqXHR.status === 419 || jqXHR.status === 401 || jqXHR.responseText.indexOf('<!DOCTYPE html>') !== -1) {
+                            window.location.href = loginUrl;
                         }
-                    },
-                    
-                    {
-                        "class": "nk-tb-col ",
-                        data: 'test_number',
-                        name: 'test_number'
-                    },
-                    {
-                        "class": "nk-tb-col ",
-                        data: 'title',
-                        name: 'title'
-                    },
-                    {
-                        "class": "nk-tb-col ",
-                        data: 'subject',
-                        name: 'subject'
-                    },
-                    {
-                        "class": "nk-tb-col ",
-                        data: 'topic',
-                        name: 'topic'
-                    },
-                    {
-                        "class": "nk-tb-col ",
-                        data: 'subtopic',
-                        name: 'subtopic'
-                    },
-                    {
-                        "class": "nk-tb-col ",
-                        data: 'state',
-                        name: 'state'
-                    },
-                    {
-                        "class": "nk-tb-col ",
-                        data: 'grade',
-                        name: 'grade'
-                    },
-                    {
-                        "class": "nk-tb-col ",
-                        data: 'total_questions',
-                        name: 'total_questions'
-                    },
-                    {
-                        "class": "nk-tb-col  text-center",
-                        data: 'status',
-                        name: 'status'
-                    },
-                    {
-                        "class": "nk-tb-col ",
-                        data: 'created_at',
-                        name: 'created_at'
-                    },
-                    {
-                        "class": "nk-tb-col  text-right",
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false
-                    },
-                ],
+                    }
+                },
+                columns: columns,
                 "fnDrawCallback":function(){
                     NioApp.BS.tooltip('[data-toggle="tooltip"]'); 
                     $('.changePassword').click(function(){

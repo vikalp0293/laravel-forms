@@ -37,10 +37,10 @@ class StandardController extends Controller
         $userPermission = \Session::get('userPermission');
         $user = Auth::user();
 
-        $topics = Subtopic::where('status','active')->orderBy('name','ASC')->get();
+        $topics = Topic::where('status','active')->orderBy('name','ASC')->get();
 
         $data = Standard::select('s.name as topic','m_standards.*')
-                ->leftjoin('m_sub_topics as s','s.id','=','m_standards.sub_topic_id')
+                ->leftjoin('m_topics as s','s.id','=','m_standards.sub_topic_id')
                 ->where(function ($query) use ($request) {
                 if (!empty($request->toArray())) {
                         if(isset($request->status) && (!empty($request->status) ) ){

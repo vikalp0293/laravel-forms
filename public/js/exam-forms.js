@@ -91,12 +91,14 @@ $(document).on('change', '.question-choice', function(){
     $('.sa_section_'+questionNo).hide();
     $('.admin_section_'+questionNo).hide();
     $('.mc_options_'+questionNo).attr('required', false);
+    $('.sa_answer_'+questionNo).attr('required', false);
 
     if ($(this).val() === 'mc') {
         $('.mc_section_'+questionNo).show();
         $('.mc_options_'+questionNo).attr('required', true);
     } else if ($(this).val() === 'sa') {
         $('.sa_section_'+questionNo).show();
+        $('.sa_answer_'+questionNo).attr('required', true);
     } else if ($(this).val() === 'admin') {
         $('.admin_section_'+questionNo).show();
     }
@@ -301,7 +303,7 @@ function backgroundFields(newSectionCount, newQuestionCount,questionData){
 
 function questionFileds(newQuestionCount,questionData=''){
 
-    var standardOptionsHtml = $('#standard_1').html();
+    var standardOptionsHtml = $('.standardOptions').html();
 
     var questionId = '';
     var examId = '';
@@ -320,10 +322,11 @@ function questionFileds(newQuestionCount,questionData=''){
     var shortAnswerOne = '';
     var shortAnswerTwo = '';
     var explanation = '';
+    var copiedFromQuestion = 0;
     var questionTypeMc = 'checked';
     var questionTypeSa = '';
 
-    var mcSectionStyle = 'display:none;';
+    var mcSectionStyle = 'display:block;';
     var saSectionStyle = 'display:none;';
 
     var correctOneOption = '';
@@ -335,21 +338,22 @@ function questionFileds(newQuestionCount,questionData=''){
     if(questionData != ''){
         if(questionData.id != ''){
             
-            questionId = questionData.id;
-            examId = questionData.exam_id;
-            backgroundNumber = questionData.background_number;
-            question = questionData.question;
-            questionTextTwo = questionData.question_text_two;
-            standard = questionData.standard;
-            questionType = questionData.question_type;
-            optionOne = questionData.option_one;
-            optionTwo = questionData.option_two;
-            optionThree = questionData.option_three;
-            optionFour = questionData.options_four;
-            correctOption = questionData.correct_option;
-            shortAnswerOne = questionData.short_answer_one;
-            shortAnswerTwo = questionData.short_answer_two;
-            explanation = questionData.explanation;
+            questionId = questionData.id ?? "";
+            examId = questionData.exam_id ?? "";
+            backgroundNumber = questionData.background_number ?? "";
+            question = questionData.question ?? "";
+            questionTextTwo = questionData.question_text_two ?? "";
+            standard = questionData.standard ?? "";
+            questionType = questionData.question_type ?? "";
+            optionOne = questionData.option_one ?? "";
+            optionTwo = questionData.option_two ?? "";
+            optionThree = questionData.option_three ?? "";
+            optionFour = questionData.options_four ?? "";
+            correctOption = questionData.correct_option ?? "";
+            shortAnswerOne = questionData.short_answer_one ?? "";
+            shortAnswerTwo = questionData.short_answer_two ?? "";
+            explanation = questionData.explanation ?? "";
+            copiedFromQuestion = questionData.id ?? "";
 
             if(questionType == 'mc'){
                 mcSectionStyle = '';
@@ -474,7 +478,7 @@ function questionFileds(newQuestionCount,questionData=''){
                 <div class="col-lg-9">\
                     <div class="form-group">\
                         <div class="form-control-wrap">\
-                            <select size="sm" class="form-select form-control form-control-lg standards" data-placeholder="Select Standard" data-parsley-errors-container=".gradeParsley" name="questions['+newQuestionCount+'][standard]" id="standard_'+newQuestionCount+'" data-search="on" >\
+                            <select size="sm" class="form-select form-control form-control-lg standards standardOptions" data-placeholder="Select Standard" data-parsley-errors-container=".gradeParsley" name="questions['+newQuestionCount+'][standard]" id="standard_'+newQuestionCount+'" data-search="on" >\
                                 '+standardOptionsHtml+'\
                             </select>\
                         </div>\
@@ -517,30 +521,30 @@ function questionFileds(newQuestionCount,questionData=''){
                                 <td></td>\
                                 <td style="width:80%">\
                                     <div class="custom-radio">\
-                                        <input type="radio" name="questions['+newQuestionCount+'][correct_option]" id="option_radio_1_'+newQuestionCount+'" class="custom-control-input radio-btn mc_options_'+newQuestionCount+'" value="1" '+correctOneOption+'>\
+                                        <input type="radio" name="questions['+newQuestionCount+'][correct_option]" id="option_radio_1_'+newQuestionCount+'" class="custom-control-input radio-btn mc_options_'+newQuestionCount+'" value="1" '+correctOneOption+' required>\
                                         <label class="custom-control-label col-lg-9"  for="option_radio_1_'+newQuestionCount+'">\
-                                            <input type="text" name="questions['+newQuestionCount+'][option1]" placeholder="Option 1" class="form-control mc_options_'+newQuestionCount+'"  value="'+optionOne+'">\
+                                            <input type="text" name="questions['+newQuestionCount+'][option1]" placeholder="Option 1" class="form-control mc_options_'+newQuestionCount+'"  value="'+optionOne+'" required>\
                                         </label>\
                                     </div>\
                                     <br><br>\
                                     <div class="custom-radio">\
-                                        <input type="radio" name="questions['+newQuestionCount+'][correct_option]" id="option_radio_2_'+newQuestionCount+'" class="custom-control-input radio-btn mc_options_'+newQuestionCount+'" value="2" '+correctTwoOption+'>\
+                                        <input type="radio" name="questions['+newQuestionCount+'][correct_option]" id="option_radio_2_'+newQuestionCount+'" class="custom-control-input radio-btn mc_options_'+newQuestionCount+'" value="2" '+correctTwoOption+' required>\
                                         <label class="custom-control-label col-lg-9"  for="option_radio_2_'+newQuestionCount+'">\
-                                            <input type="text" name="questions['+newQuestionCount+'][option2]" placeholder="Option 2" class="form-control mc_options_'+newQuestionCount+'"  value="'+optionTwo+'">\
+                                            <input type="text" name="questions['+newQuestionCount+'][option2]" placeholder="Option 2" class="form-control mc_options_'+newQuestionCount+'"  value="'+optionTwo+'" required>\
                                         </label>\
                                     </div>\
                                     <br><br>\
                                     <div class="custom-radio">\
-                                        <input type="radio" name="questions['+newQuestionCount+'][correct_option]" id="option_radio_3_'+newQuestionCount+'" class="custom-control-input radio-btn mc_options_'+newQuestionCount+'" value="3" '+correctThreeOption+'>\
+                                        <input type="radio" name="questions['+newQuestionCount+'][correct_option]" id="option_radio_3_'+newQuestionCount+'" class="custom-control-input radio-btn mc_options_'+newQuestionCount+'" value="3" '+correctThreeOption+' required>\
                                         <label class="custom-control-label col-lg-9"  for="option_radio_3_'+newQuestionCount+'">\
-                                            <input type="text" name="questions['+newQuestionCount+'][option3]" placeholder="Option 3" class="form-control mc_options_'+newQuestionCount+'"  value="'+optionThree+'">\
+                                            <input type="text" name="questions['+newQuestionCount+'][option3]" placeholder="Option 3" class="form-control mc_options_'+newQuestionCount+'"  value="'+optionThree+'" required>\
                                         </label>\
                                     </div>\
                                     <br><br>\
                                     <div class="custom-radio">\
-                                        <input type="radio" name="questions['+newQuestionCount+'][correct_option]" id="option_radio_4_'+newQuestionCount+'" class="custom-control-input radio-btn mc_options_'+newQuestionCount+'"  value="4" '+correctFourOption+'>\
+                                        <input type="radio" name="questions['+newQuestionCount+'][correct_option]" id="option_radio_4_'+newQuestionCount+'" class="custom-control-input radio-btn mc_options_'+newQuestionCount+'"  value="4" '+correctFourOption+' required>\
                                         <label class="custom-control-label col-lg-9"  for="option_radio_4_'+newQuestionCount+'">\
-                                            <input type="text" name="questions['+newQuestionCount+'][option4]" placeholder="Option 4" class="form-control mc_options_'+newQuestionCount+'"  value="'+optionFour+'">\
+                                            <input type="text" name="questions['+newQuestionCount+'][option4]" placeholder="Option 4" class="form-control mc_options_'+newQuestionCount+'"  value="'+optionFour+'" required>\
                                         </label>\
                                     </div>\
                                 </td>\
@@ -567,7 +571,7 @@ function questionFileds(newQuestionCount,questionData=''){
                         </div>\
                     </div>\
                     <div class="col-lg-9">\
-                        <textarea  data-parsley-errors-container=".parsley-container-sa_answer_1" id="sa_answer_1" name="questions['+newQuestionCount+'][sa_answer_1]" class="form-control" autocomplete="off">'+shortAnswerOne+'</textarea>\
+                        <textarea  data-parsley-errors-container=".parsley-container-sa_answer_1" id="sa_answer_1" name="questions['+newQuestionCount+'][sa_answer_1]" class="form-control sa_answer_'+newQuestionCount+'" autocomplete="off">'+shortAnswerOne+'</textarea>\
                     </div>\
                 </div>\
                 <div class="row g-3 align-center">\
@@ -587,10 +591,11 @@ function questionFileds(newQuestionCount,questionData=''){
                         </div>\
                     </div>\
                     <div class="col-lg-9">\
-                        <textarea  data-parsley-errors-container=".parsley-container-sa_explanation_text" id="sa_explanation_text" name="questions['+newQuestionCount+'][sa_explanation_text]" class="form-control" autocomplete="off">'+explanation+'</textarea>\
+                        <textarea  data-parsley-errors-container=".parsley-container-sa_explanation_text" id="sa_explanation_text" name="questions['+newQuestionCount+'][sa_explanation_text]" class="form-control sa_answer_'+newQuestionCount+'" autocomplete="off">'+explanation+'</textarea>\
                     </div>\
                 </div>\
             </div>\
+            <input type="hidden" value="'+copiedFromQuestion+'" name="questions['+newQuestionCount+'][copied_from_question]">\
             <div class="text-right" style="margin:5px 0px 5px 0px !important;"><a href="javascript:void(0);" class="btn btn-danger remove_button" data-box="'+newQuestionCount+'"><em class="icon ni ni-trash"></em> Remove Question</a></div>\
         </div>\
     ';
@@ -676,6 +681,25 @@ $(document).on('click', '.remove_button', function(e){
     $('.question-wrapper-'+boxCount).remove();
     removeEmptySectionBoxes();
     updateQuestionsBasedOnCheckbox();
+});
+
+$(document).on('click', '.delete_question', function(e){
+    e.preventDefault();
+    var boxCount = $(this).data('box');
+    var currentValue = $('#delete_question_input').val();
+
+    if (currentValue) {
+        // Append new value with a comma if it's not already present
+        var valuesArray = currentValue.split(',').map(value => value.trim());
+        
+        if (!valuesArray.includes(boxCount.toString())) {
+            valuesArray.push(boxCount);
+            $('#delete_question_input').val(valuesArray.join(', '));
+        }
+    } else {
+        // If empty, just set the new value
+        $('#delete_question_input').val(boxCount);
+    }
 });
 
 function removeEmptySectionBoxes() {
